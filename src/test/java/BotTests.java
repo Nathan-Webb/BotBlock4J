@@ -3,7 +3,7 @@ import com.nathanwebb.BotBlock4J.BotBlockRequests;
 import com.nathanwebb.BotBlock4J.BotList;
 import com.nathanwebb.BotBlock4J.exceptions.EmptyResponseException;
 import com.nathanwebb.BotBlock4J.exceptions.FailedToSendException;
-import com.nathanwebb.BotBlock4J.exceptions.RatelimitedException;
+import com.nathanwebb.BotBlock4J.exceptions.RateLimitedException;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -49,7 +49,7 @@ public class BotTests extends ListenerAdapter{
         try {
             BotBlockRequests.postGuildsJDA(event.getJDA(), blockAuth);
             System.out.println("Guild Counts have been POSTED!");
-        } catch (Exception | FailedToSendException | EmptyResponseException | RatelimitedException e){
+        } catch (Exception | FailedToSendException | EmptyResponseException | RateLimitedException e){
             e.printStackTrace();
         }
     }

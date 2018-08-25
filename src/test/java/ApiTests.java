@@ -3,7 +3,7 @@ import com.nathanwebb.BotBlock4J.BotBlockRequests;
 import com.nathanwebb.BotBlock4J.BotList;
 import com.nathanwebb.BotBlock4J.exceptions.EmptyResponseException;
 import com.nathanwebb.BotBlock4J.exceptions.FailedToSendException;
-import com.nathanwebb.BotBlock4J.exceptions.RatelimitedException;
+import com.nathanwebb.BotBlock4J.exceptions.RateLimitedException;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -21,9 +21,9 @@ public class ApiTests {
             botListTokenReader.close();
 
             blockAuth = new BlockAuth();
-            blockAuth.setListAuthToken(BotList.BOTS_FOR_DISCORD, bfdToken);
+            blockAuth.setListAuthToken(BotList.BOTS_FOR_DISCORD,  bfdToken);
             BotBlockRequests.postGuilds("460545687592108032",300, blockAuth);
-        } catch (Exception | FailedToSendException | EmptyResponseException | RatelimitedException e){
+        } catch (Exception | FailedToSendException | EmptyResponseException | RateLimitedException e){
             e.printStackTrace();
         }
     }

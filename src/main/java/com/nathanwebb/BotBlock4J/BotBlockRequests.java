@@ -20,11 +20,12 @@ package com.nathanwebb.BotBlock4J;
 
 import com.nathanwebb.BotBlock4J.exceptions.EmptyResponseException;
 import com.nathanwebb.BotBlock4J.exceptions.FailedToSendException;
-import com.nathanwebb.BotBlock4J.exceptions.RatelimitedException;
+import com.nathanwebb.BotBlock4J.exceptions.RateLimitedException;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import okhttp3.*;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -47,8 +48,9 @@ public class BotBlockRequests {
      * @throws FailedToSendException If one or more lists returned errors when posting.
      * @throws EmptyResponseException If BotBlock api does something funny and returns an empty JSON body.
      * @throws IOException If the connection drops/is cancelled.
+     * @throws RateLimitedException If we are being ratelimited.
      */
-    public static void postGuildsShardManager(ShardManager shardManager, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RatelimitedException, IOException{
+    public static void postGuildsShardManager(ShardManager shardManager, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
         String url = baseURL + "count";
 
         JSONObject data = new JSONObject();
@@ -85,8 +87,9 @@ public class BotBlockRequests {
      * @throws FailedToSendException If one or more lists returned errors when posting.
      * @throws EmptyResponseException If BotBlock api does something funny and returns an empty JSON body.
      * @throws IOException If the connection drops/is cancelled.
+     * @throws RateLimitedException If we are being ratelimited.
      */
-    public static void postGuildsJDA(JDA jda, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RatelimitedException, IOException{
+    public static void postGuildsJDA(JDA jda, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
         String url = baseURL + "count";
 
         JSONObject data = new JSONObject();
@@ -119,8 +122,9 @@ public class BotBlockRequests {
      * @throws FailedToSendException If one or more lists returned errors when posting.
      * @throws EmptyResponseException If BotBlock api does something funny and returns an empty JSON body.
      * @throws IOException If the connection drops/is cancelled.
+     * @throws RateLimitedException If we are being ratelimited.
      */
-    public static void postGuilds(String botId, int servers, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RatelimitedException, IOException{
+    public static void postGuilds(String botId, int servers, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
         String url = baseURL + "count";
 
         JSONObject data = new JSONObject();
@@ -149,8 +153,9 @@ public class BotBlockRequests {
      * @throws FailedToSendException If one or more lists returned errors when posting.
      * @throws EmptyResponseException If BotBlock api does something funny and returns an empty JSON body.
      * @throws IOException If the connection drops/is cancelled.
+     * @throws RateLimitedException If we are being ratelimited.
      */
-    public static void postGuilds(long botId, int servers, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RatelimitedException, IOException{
+    public static void postGuilds(long botId, int servers, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
         String url = baseURL + "count";
 
         JSONObject data = new JSONObject();
@@ -176,8 +181,9 @@ public class BotBlockRequests {
      * @throws FailedToSendException If one or more lists returned errors when posting.
      * @throws EmptyResponseException If BotBlock api does something funny and returns an empty JSON body.
      * @throws IOException If the connection drops/is cancelled.
+     * @throws RateLimitedException If we are being ratelimited.
      */
-    private static void postGuildRequest(Request request) throws FailedToSendException, EmptyResponseException, RatelimitedException, IOException{
+    private static void postGuildRequest(Request request) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
         Response response = new OkHttpClient().newCall(request).execute();
         ResponseBody responseBody = response.body();
 
@@ -185,18 +191,19 @@ public class BotBlockRequests {
         if(responseBody != null) {
             String responseString = responseBody.string();
             if(response.code() == 429){
-                throw new RatelimitedException(responseString);
+                throw new RateLimitedException(responseString);
             }
             JSONObject responseObject = new JSONObject(responseString);
-            JSONArray failures = responseObject.getJSONArray("failure");
-            if(!failures.isEmpty()){
-                List<String> botLists = new ArrayList<>();
-                /*for(String listFailureKey : failures.keySet()){
-                    JSONArray failedListArray = failures.getJSONArray(listFailureKey);
-                    botLists.add("List name: " + listFailureKey + " Error Code: " + failedListArray.getInt(0) + " Error Message: " + failedListArray.getString(1));
-                }*/
-                responseBody.close();
-                throw new FailedToSendException(botLists);
+
+            if(!responseObject.get("failure").toString().equals("[]")) { //if there is a failed server POST attempt
+                JSONObject failures = responseObject.getJSONObject("failure");
+                    List<String> botLists = new ArrayList<>();
+                    for (String listFailureKey : failures.keySet()) {
+                        JSONArray failedListArray = failures.getJSONArray(listFailureKey);
+                        botLists.add("List name: " + listFailureKey + " Error Code: " + failedListArray.getInt(0) + " Error Message: " + failedListArray.getString(1));
+                    }
+                    responseBody.close();
+                    throw new FailedToSendException(botLists);
             }
             responseBody.close();
             response.close();

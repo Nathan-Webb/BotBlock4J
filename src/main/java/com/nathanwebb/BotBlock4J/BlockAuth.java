@@ -4,7 +4,9 @@ package com.nathanwebb.BotBlock4J;
 import java.util.HashMap;
 
 
-
+/**
+ * Main class that handles Bot List authorization.
+ */
 public class BlockAuth {
     private HashMap<BotList, String> authHashMap = new HashMap<>();
 

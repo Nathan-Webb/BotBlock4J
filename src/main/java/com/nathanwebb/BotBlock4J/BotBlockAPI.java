@@ -20,7 +20,7 @@ package com.nathanwebb.BotBlock4J;
 
 import com.nathanwebb.BotBlock4J.exceptions.EmptyResponseException;
 import com.nathanwebb.BotBlock4J.exceptions.FailedToSendException;
-import com.nathanwebb.BotBlock4J.exceptions.RatelimitedException;
+import com.nathanwebb.BotBlock4J.exceptions.RateLimitedException;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 
@@ -154,13 +154,13 @@ public class BotBlockAPI {
                 if(shardManager !=null){
                     try {
                         BotBlockRequests.postGuildsShardManager(shardManager, blockAuth);
-                    } catch (FailedToSendException | EmptyResponseException | RatelimitedException | IOException e) {
+                    } catch (FailedToSendException | EmptyResponseException | RateLimitedException | IOException e) {
                         e.printStackTrace();
                     }
                 } else if(jda != null){
                     try {
                         BotBlockRequests.postGuildsJDA(jda, blockAuth);
-                    } catch (FailedToSendException | EmptyResponseException | RatelimitedException | IOException e) {
+                    } catch (FailedToSendException | EmptyResponseException | RateLimitedException | IOException e) {
                         e.printStackTrace();
                     }
                 } else {
