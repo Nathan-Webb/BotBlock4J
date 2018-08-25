@@ -1,0 +1,112 @@
+
+plugins {
+    id "com.jfrog.bintray" version "1.8.4"
+}
+
+
+group 'com.nathanwebb'
+version '1.0.0'
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = 1.8
+
+jar {
+    baseName = 'BotBlock4J'
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+
+bintray {
+    user = 'nathan-webb'
+    key = rootProject.file('testing/bintrayKey.txt').text.trim();
+    dryRun = false
+    publish = false
+    pkg {
+        publications = ['MyPublication']
+        version {
+            name = '1.0.0'
+            desc = 'First Release'
+            released  = new Date()
+        }
+        repo = 'maven'
+        name = 'BotBlock4J'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/Nathan-Webb/BotBlock4J.git'
+
+    }
+}
+
+// Create the pom configuration:
+def pomConfig = {
+    licenses {
+        license {
+            name "MIT License"
+            url "http://www.opensource.org/licenses/mit-license.php<"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "Nathan-Webb"
+            name "Nathan Webb"
+            email "nathanwgithub@gmail.com"
+        }
+    }
+
+    scm {
+        url "https://github.com/Nathan-Webb/BotBlock4J"
+    }
+}
+
+// Create the publication with the pom configuration:
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            groupId 'com.nathanwebb'
+            artifactId 'BotBlock4J'
+            version '1.0.0'
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'BotBlock API')
+                root.appendNode('name', 'BotBlock4J')
+                root.children().last() + pomConfig
+            }
+        }
+    }
+}
+
+dependencies {
+    compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.11.0'
+    compile group: 'org.json', name: 'json', version: '20180813'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile ('net.dv8tion:JDA:3.6.0_368'){
+        exclude module: 'opus-java'
+    }
+
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
