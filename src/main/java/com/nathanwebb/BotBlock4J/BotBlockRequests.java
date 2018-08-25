@@ -20,6 +20,7 @@ package com.nathanwebb.BotBlock4J;
 
 import com.nathanwebb.BotBlock4J.exceptions.EmptyResponseException;
 import com.nathanwebb.BotBlock4J.exceptions.FailedToSendException;
+import com.nathanwebb.BotBlock4J.exceptions.RatelimitedException;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import okhttp3.*;
@@ -47,7 +48,7 @@ public class BotBlockRequests {
      * @throws EmptyResponseException If BotBlock api does something funny and returns an empty JSON body.
      * @throws IOException If the connection drops/is cancelled.
      */
-    public static void postGuildsShardManager(ShardManager shardManager, BlockAuth auth) throws FailedToSendException, EmptyResponseException, IOException{
+    public static void postGuildsShardManager(ShardManager shardManager, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RatelimitedException, IOException{
         String url = baseURL + "count";
 
         JSONObject data = new JSONObject();
@@ -65,12 +66,12 @@ public class BotBlockRequests {
         HashMap<BotList, String> authHashMap = auth.getAuthHashMap();
         authHashMap.forEach((botList, authToken) -> data.put(botList.toString(), authToken));
 
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), data.toString());
-
+        RequestBody body = RequestBody.create(null, data.toString());
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
                 .addHeader("User-Agent", shardManager.getShardById(0).getSelfUser().getId())
+                .addHeader("Content-Type", "application/json")
                 .build();
         postGuildRequest(request);
     }
@@ -85,7 +86,7 @@ public class BotBlockRequests {
      * @throws EmptyResponseException If BotBlock api does something funny and returns an empty JSON body.
      * @throws IOException If the connection drops/is cancelled.
      */
-    public static void postGuildsJDA(JDA jda, BlockAuth auth) throws FailedToSendException, EmptyResponseException, IOException{
+    public static void postGuildsJDA(JDA jda, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RatelimitedException, IOException{
         String url = baseURL + "count";
 
         JSONObject data = new JSONObject();
@@ -99,12 +100,12 @@ public class BotBlockRequests {
         HashMap<BotList, String> authHashMap = auth.getAuthHashMap();
         authHashMap.forEach((botList, authToken) -> data.put(botList.toString(), authToken));
 
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), data.toString());
-
+        RequestBody body = RequestBody.create(null, data.toString());
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
                 .addHeader("User-Agent", jda.getSelfUser().getId())
+                .addHeader("Content-Type", "application/json")
                 .build();
         postGuildRequest(request);
     }
@@ -119,7 +120,7 @@ public class BotBlockRequests {
      * @throws EmptyResponseException If BotBlock api does something funny and returns an empty JSON body.
      * @throws IOException If the connection drops/is cancelled.
      */
-    public static void postGuilds(String botId, int servers, BlockAuth auth) throws FailedToSendException, EmptyResponseException, IOException{
+    public static void postGuilds(String botId, int servers, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RatelimitedException, IOException{
         String url = baseURL + "count";
 
         JSONObject data = new JSONObject();
@@ -129,12 +130,12 @@ public class BotBlockRequests {
         HashMap<BotList, String> authHashMap = auth.getAuthHashMap();
         authHashMap.forEach((botList, authToken) -> data.put(botList.toString(), authToken));
 
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), data.toString());
-
+        RequestBody body = RequestBody.create(null, data.toString());
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
                 .addHeader("User-Agent", botId)
+                .addHeader("Content-Type", "application/json")
                 .build();
         postGuildRequest(request);
     }
@@ -149,7 +150,7 @@ public class BotBlockRequests {
      * @throws EmptyResponseException If BotBlock api does something funny and returns an empty JSON body.
      * @throws IOException If the connection drops/is cancelled.
      */
-    public static void postGuilds(long botId, int servers, BlockAuth auth) throws FailedToSendException, EmptyResponseException, IOException{
+    public static void postGuilds(long botId, int servers, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RatelimitedException, IOException{
         String url = baseURL + "count";
 
         JSONObject data = new JSONObject();
@@ -159,12 +160,12 @@ public class BotBlockRequests {
         HashMap<BotList, String> authHashMap = auth.getAuthHashMap();
         authHashMap.forEach((botList, authToken) -> data.put(botList.toString(), authToken));
 
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), data.toString());
-
+        RequestBody body = RequestBody.create(null, data.toString());
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
                 .addHeader("User-Agent", Long.toString(botId))
+                .addHeader("Content-Type", "application/json")
                 .build();
         postGuildRequest(request);
     }
@@ -176,27 +177,31 @@ public class BotBlockRequests {
      * @throws EmptyResponseException If BotBlock api does something funny and returns an empty JSON body.
      * @throws IOException If the connection drops/is cancelled.
      */
-    private static void postGuildRequest(Request request) throws FailedToSendException, EmptyResponseException, IOException{
+    private static void postGuildRequest(Request request) throws FailedToSendException, EmptyResponseException, RatelimitedException, IOException{
         Response response = new OkHttpClient().newCall(request).execute();
-        response.close();
         ResponseBody responseBody = response.body();
 
         //check to make sure we actually got a response
         if(responseBody != null) {
-            JSONObject responseObject = new JSONObject(responseBody.string());
-            JSONObject failures = responseObject.getJSONObject("failure");
-
+            String responseString = responseBody.string();
+            if(response.code() == 429){
+                throw new RatelimitedException(responseString);
+            }
+            JSONObject responseObject = new JSONObject(responseString);
+            JSONArray failures = responseObject.getJSONArray("failure");
             if(!failures.isEmpty()){
                 List<String> botLists = new ArrayList<>();
-                for(String listFailureKey : failures.keySet()){
+                /*for(String listFailureKey : failures.keySet()){
                     JSONArray failedListArray = failures.getJSONArray(listFailureKey);
                     botLists.add("List name: " + listFailureKey + " Error Code: " + failedListArray.getInt(0) + " Error Message: " + failedListArray.getString(1));
-                }
+                }*/
                 responseBody.close();
                 throw new FailedToSendException(botLists);
             }
             responseBody.close();
+            response.close();
         } else {
+            response.close();
             throw new EmptyResponseException("Error when sending a request to BotBlock!");
         }
     }

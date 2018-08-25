@@ -20,6 +20,7 @@ package com.nathanwebb.BotBlock4J;
 
 import com.nathanwebb.BotBlock4J.exceptions.EmptyResponseException;
 import com.nathanwebb.BotBlock4J.exceptions.FailedToSendException;
+import com.nathanwebb.BotBlock4J.exceptions.RatelimitedException;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 
@@ -144,25 +145,26 @@ public class BotBlockAPI {
 
     /**
      * Starts the guild counter.
+     * @throws IllegalStateException If neither a JDA instance nor a Shard Manager are initialized.
      */
-    private void startSendingGuildCounts(){
+    public void startSendingGuildCounts() throws IllegalStateException{
         scheduler.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 if(shardManager !=null){
                     try {
                         BotBlockRequests.postGuildsShardManager(shardManager, blockAuth);
-                    } catch (FailedToSendException | EmptyResponseException | IOException e) {
+                    } catch (FailedToSendException | EmptyResponseException | RatelimitedException | IOException e) {
                         e.printStackTrace();
                     }
                 } else if(jda != null){
                     try {
                         BotBlockRequests.postGuildsJDA(jda, blockAuth);
-                    } catch (FailedToSendException | EmptyResponseException | IOException e) {
+                    } catch (FailedToSendException | EmptyResponseException | RatelimitedException | IOException e) {
                         e.printStackTrace();
                     }
                 } else {
-                    //todo throw exception here
+                    throw new IllegalStateException("There is no available JDA instance to use!");
                 }
            }
         }, 0, updateInterval, TimeUnit.MINUTES);
@@ -171,7 +173,7 @@ public class BotBlockAPI {
     /**
      * Shuts down the guild counter.
      */
-    private void shutdownGuildCountSender(){
+    public void stopSendingGuildCounts(){
         scheduler.shutdown();
     }
 }
