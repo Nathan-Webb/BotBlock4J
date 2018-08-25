@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.Nathan-Webb:BotBlock4J:VERSION-HERE'
+    implementation 'com.github.Nathan-Webb:BotBlock4J:master'
 }
 ```
 
@@ -36,7 +36,7 @@ dependencies {
 	<dependency>
 	    <groupId>com.github.Nathan-Webb</groupId>
 	    <artifactId>BotBlock4J</artifactId>
-	    <version>-SNAPSHOT</version>
+	    <version>master</version>
 	</dependency>
 ```
 
