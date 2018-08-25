@@ -43,4 +43,5 @@ Thumbs.db
 /.idea/*
 /.gradle/*
 /testing/*
+build.gradle
 

@@ -39,7 +39,8 @@ public class BotBlockRequests {
     private static String baseURL = "https://botblock.org/api/";
 
     /**
-     * Posts the guild total given a Shard Manager. The User Agent will be the bot's name.
+     * Posts the guild total given a Shard Manager.
+     * The User Agent is {@code Discord Bot (user-id)}
      * @param shardManager Manager used when sharding.
      * @param auth BlockAuth object with all necessary values.
      * @throws FailedToSendException If one or more lists returned errors when posting.
@@ -69,14 +70,15 @@ public class BotBlockRequests {
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
-                .addHeader("User-Agent", shardManager.getShardById(0).getSelfUser().getName())
+                .addHeader("User-Agent", shardManager.getShardById(0).getSelfUser().getId())
                 .build();
         postGuildRequest(request);
     }
 
     /**
      * Posts the guild total given a JDA instance. If the instance is one that is sharding,
-     * it will send the current shard ID as well as the total number of shards. The User Agent will be the bot's name.
+     * it will send the current shard ID as well as the total number of shards.
+     * The User Agent is {@code Discord Bot (user-id)}
      * @param jda Instance that is used with the discord API.
      * @param auth BlockAuth object with all necessary values.
      * @throws FailedToSendException If one or more lists returned errors when posting.
@@ -102,7 +104,7 @@ public class BotBlockRequests {
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
-                .addHeader("User-Agent", jda.getSelfUser().getName())
+                .addHeader("User-Agent", jda.getSelfUser().getId())
                 .build();
         postGuildRequest(request);
     }
@@ -132,7 +134,7 @@ public class BotBlockRequests {
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
-                .addHeader("User-Agent", "Discord Bot (" + botId + ")")
+                .addHeader("User-Agent", botId)
                 .build();
         postGuildRequest(request);
     }
@@ -162,7 +164,7 @@ public class BotBlockRequests {
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
-                .addHeader("User-Agent", "Discord Bot (" + Long.toString(botId) + ")")
+                .addHeader("User-Agent", Long.toString(botId))
                 .build();
         postGuildRequest(request);
     }
