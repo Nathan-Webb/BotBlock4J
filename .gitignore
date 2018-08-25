@@ -42,3 +42,4 @@ Thumbs.db
 /.idea/*
 /.gradle/*
 /testing/*
+buildJCenter.gradle
