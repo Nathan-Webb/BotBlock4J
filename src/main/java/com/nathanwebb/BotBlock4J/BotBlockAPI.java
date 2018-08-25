@@ -137,8 +137,12 @@ public class BotBlockAPI {
     /**
      * Sets the timeout between sending guild counts.
      * @param updateInterval Interval between guild count updates.
+     * @throws IllegalArgumentException If the int is less than 1.
      */
-    public void setUpdateInterval(int updateInterval){
+    public void setUpdateInterval(int updateInterval) throws IllegalArgumentException{
+        if(updateInterval < 1){
+            throw new IllegalArgumentException("The amount of minutes between POST Requests must be at least 1.");
+        }
         this.updateInterval = updateInterval;
     }
 
