@@ -1,49 +1,52 @@
 # BotBlock4J
+[ ![Download](https://api.bintray.com/packages/nathan-webb/maven/BotBlock4J/images/download.svg) ](https://bintray.com/nathan-webb/maven/BotBlock4J/_latestVersion)
 
-##### Api wrapper for `https://botblock.org`, a site that removes the hassle from managing multiple Discord List APIs 
+
+##### Api wrapper for `https://botblock.org`, a site that removes the hassle from managing multiple Discord List APIs
 
 
 ## Download
 
-You have two options for implementing the API. 
 
+You have three options for implementing the API.
 
 ##### Gradle:
 
+
 ```text
 repositories {
-    maven { url 'https://jitpack.io' }
+    jcenter()
 }
 
 dependencies {
-    implementation 'com.github.Nathan-Webb:BotBlock4J:master'
+ compile 'com.nathanwebb:BotBlock4J:LATEST-VERSION-HERE'
 }
 ```
 
-
 ##### Maven:
 
-```xml
-	<repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-	</repositories>
-```
 
 ```xml
-	<dependency>
-	    <groupId>com.github.Nathan-Webb</groupId>
-	    <artifactId>BotBlock4J</artifactId>
-	    <version>master</version>
-	</dependency>
+<dependency>
+  <groupId>com.nathanwebb</groupId>
+  <artifactId>BotBlock4J</artifactId>
+  <version>LATEST-VERSION-HERE</version>
+  <type>pom</type>
+</dependency>
 ```
 
+##### Ivy:
+
+
+```text
+<dependency org='com.nathanwebb' name='BotBlock4J' rev='LATEST-VERSION-HERE'>
+  <artifact name='BotBlock4J' ext='pom' ></artifact>
+</dependency>
+```
 
 ##### Other:
 
-Alternatively, you could just head over to `https://bintray.com/nathan-webb/maven/BotBlock4J` 
+Alternatively, you could just head over to `https://bintray.com/nathan-webb/maven/BotBlock4J/_latestVersion`
 and download the jar file yourself.
 
 
@@ -60,7 +63,9 @@ BotBlockAPI api = new BotBlockAPI(jda, true, auth); //This starts a 30 minute ti
 api.setUpdateInterval(20); //if you wish to change the interval, you can do so with this method.
 //...
 api.stopSendingGuildCounts(); //stops the timer
+
 //...
+
 api.startSendingGuildCounts(); //starts it again
 ```
 
