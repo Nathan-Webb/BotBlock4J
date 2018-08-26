@@ -42,7 +42,7 @@ public class RateLimitedException extends BotBlockException {
 
     @Override
     public String getMessage() {
-        return "We have been ratelimited! Retry after: " + secondsTilRetry + "s";
+        return "We have been ratelimited! Retry after " + secondsTilRetry + "s";
     }
 
     /**

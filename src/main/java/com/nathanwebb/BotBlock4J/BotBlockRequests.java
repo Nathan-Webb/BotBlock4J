@@ -29,10 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Contains all the methods for interacting with the BotBlock API.
@@ -65,8 +62,8 @@ public class BotBlockRequests {
         data.put("shards", Arrays.deepToString(shardGuildCounts.toArray()));
 
 
-        HashMap<BotList, String> authHashMap = auth.getAuthHashMap();
-        authHashMap.forEach((botList, authToken) -> data.put(botList.toString(), authToken));
+        HashMap<String, String> authHashMap = auth.getAuthHashMap();
+        authHashMap.forEach(data::put);
 
         RequestBody body = RequestBody.create(null, data.toString());
         Request request = new Request.Builder()
@@ -100,8 +97,8 @@ public class BotBlockRequests {
             data.put("shard_id", jda.getShardInfo().getShardId());
             data.put("shard_count", jda.getShardInfo().getShardTotal());
         }
-        HashMap<BotList, String> authHashMap = auth.getAuthHashMap();
-        authHashMap.forEach((botList, authToken) -> data.put(botList.toString(), authToken));
+        HashMap<String, String> authHashMap = auth.getAuthHashMap();
+        authHashMap.forEach(data::put);
 
         RequestBody body = RequestBody.create(null, data.toString());
         Request request = new Request.Builder()
@@ -131,8 +128,8 @@ public class BotBlockRequests {
 
         data.put("server_count", servers);
         data.put("bot_id", botId);
-        HashMap<BotList, String> authHashMap = auth.getAuthHashMap();
-        authHashMap.forEach((botList, authToken) -> data.put(botList.toString(), authToken));
+        HashMap<String, String> authHashMap = auth.getAuthHashMap();
+        authHashMap.forEach(data::put);
 
         RequestBody body = RequestBody.create(null, data.toString());
         Request request = new Request.Builder()
@@ -162,8 +159,8 @@ public class BotBlockRequests {
 
         data.put("server_count", servers);
         data.put("bot_id", Long.toString(botId));
-        HashMap<BotList, String> authHashMap = auth.getAuthHashMap();
-        authHashMap.forEach((botList, authToken) -> data.put(botList.toString(), authToken));
+        HashMap<String, String> authHashMap = auth.getAuthHashMap();
+        authHashMap.forEach(data::put);
 
         RequestBody body = RequestBody.create(null, data.toString());
         Request request = new Request.Builder()
@@ -199,8 +196,13 @@ public class BotBlockRequests {
                 JSONObject failures = responseObject.getJSONObject("failure");
                     List<String> botLists = new ArrayList<>();
                     for (String listFailureKey : failures.keySet()) {
-                        JSONArray failedListArray = failures.getJSONArray(listFailureKey);
-                        botLists.add("List name: " + listFailureKey + " Error Code: " + failedListArray.getInt(0) + " Error Message: " + failedListArray.getString(1));
+                        try {
+                            JSONArray failedListArray = failures.getJSONArray(listFailureKey);
+                            botLists.add("List name: " + listFailureKey + " Error Code: " + failedListArray.getInt(0) + " Error Message: " + failedListArray.getString(1));
+                        } catch (JSONException e){
+                            Map<String, Object> notFound = failures.toMap();
+                            botLists.add("Errors: " + notFound.toString());
+                        }
                     }
                     responseBody.close();
                     throw new FailedToSendException(botLists);

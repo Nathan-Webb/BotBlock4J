@@ -1,6 +1,5 @@
 import com.nathanwebb.BotBlock4J.BlockAuth;
 import com.nathanwebb.BotBlock4J.BotBlockRequests;
-import com.nathanwebb.BotBlock4J.BotList;
 import com.nathanwebb.BotBlock4J.exceptions.EmptyResponseException;
 import com.nathanwebb.BotBlock4J.exceptions.FailedToSendException;
 import com.nathanwebb.BotBlock4J.exceptions.RateLimitedException;
@@ -33,7 +32,7 @@ public class BotTests extends ListenerAdapter{
             builder.addEventListener(this);
 
             blockAuth = new BlockAuth();
-            blockAuth.setListAuthToken(BotList.BOTS_FOR_DISCORD, bfdToken);
+            blockAuth.setListAuthToken("botsfordiscord.com", bfdToken);
 
             JDA jda = builder.buildBlocking();
             System.out.printf("Logged in as:\n%s (%s)\n", jda.getSelfUser().getName(), jda.getSelfUser().getId());

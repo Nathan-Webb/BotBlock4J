@@ -1,6 +1,5 @@
 import com.nathanwebb.BotBlock4J.BlockAuth;
 import com.nathanwebb.BotBlock4J.BotBlockRequests;
-import com.nathanwebb.BotBlock4J.BotList;
 import com.nathanwebb.BotBlock4J.exceptions.EmptyResponseException;
 import com.nathanwebb.BotBlock4J.exceptions.FailedToSendException;
 import com.nathanwebb.BotBlock4J.exceptions.RateLimitedException;
@@ -21,7 +20,7 @@ public class ApiTests {
             botListTokenReader.close();
 
             blockAuth = new BlockAuth();
-            blockAuth.setListAuthToken(BotList.BOTS_FOR_DISCORD,  bfdToken);
+            blockAuth.setListAuthToken("botsfordicc.com",  "hi-ipv4");
             BotBlockRequests.postGuilds("460545687592108032",300, blockAuth);
         } catch (Exception | FailedToSendException | EmptyResponseException | RateLimitedException e){
             e.printStackTrace();
