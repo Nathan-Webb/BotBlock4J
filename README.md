@@ -60,9 +60,7 @@ BotBlockAPI api = new BotBlockAPI(jda, true, auth); //This starts a 30 minute ti
 api.setUpdateInterval(20); //if you wish to change the interval, you can do so with this method.
 //...
 api.stopSendingGuildCounts(); //stops the timer
-
 //...
-
 api.startSendingGuildCounts(); //starts it again
 ```
 
