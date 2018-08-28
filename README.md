@@ -59,8 +59,8 @@ and download the jar file yourself.
 BlockAuth auth = new BlockAuth();
 auth.setListAuthToken("botsfordiscord.com", "token-here");
 //Add other lists as needed.
-BotBlockAPI api = new BotBlockAPI(jda, true, auth); //This starts a timer that sends guild counts every 30 minutes.
-api.setUpdateInterval(20); //if you wish to change the interval, you can do so with this method.
+BotBlockAPI api = new BotBlockAPI(jda, false, auth); //This starts a timer that sends guild counts every 30 minutes.
+api.setUpdateInterval(20); //if you wish to change the interval, you must first provide a false in the method above can do so with this method.
 //...
 api.stopSendingGuildCounts(); //stops the timer
 

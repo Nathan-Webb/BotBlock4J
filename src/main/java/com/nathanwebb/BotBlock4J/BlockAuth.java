@@ -15,7 +15,7 @@ public class BlockAuth {
 
     /**
      * Sets the authorization token given a Bot List URL and the authorization token that the site gave you.
-     * If the value has already been set in the preceding code, the value will be overwritten. If the
+     * If the value has already been set in the preceding code, the value will be overwritten.
      * @param listURL Bot List URL. It _must_ be the base url. eg. {@code google.com} and not {@code https://google.com/search/other}
      * @param authToken The token that you would normally put in your {@code Authorization} header if you were doing this manually.
      */

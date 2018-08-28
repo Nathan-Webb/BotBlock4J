@@ -171,7 +171,7 @@ public class BotBlockAPI {
                     throw new IllegalStateException("There is no available JDA instance to use!");
                 }
            }
-        }, 0, updateInterval, TimeUnit.MINUTES);
+        }, updateInterval, updateInterval, TimeUnit.MINUTES);
     }
 
     /**

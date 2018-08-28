@@ -20,7 +20,7 @@ public class ApiTests {
             botListTokenReader.close();
 
             blockAuth = new BlockAuth();
-            blockAuth.setListAuthToken("botsfordicc.com",  "hi-ipv4");
+            blockAuth.setListAuthToken("botsfordiscord.com",  bfdToken);
             BotBlockRequests.postGuilds("460545687592108032",300, blockAuth);
         } catch (Exception | FailedToSendException | EmptyResponseException | RateLimitedException e){
             e.printStackTrace();

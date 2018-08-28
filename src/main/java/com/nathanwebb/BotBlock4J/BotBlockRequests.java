@@ -59,7 +59,7 @@ public class BotBlockRequests {
         for(JDA jdaShard : shardManager.getShards()){
             shardGuildCounts.add(jdaShard.getGuilds().size());
         }
-        data.put("shards", Arrays.deepToString(shardGuildCounts.toArray()));
+        data.put("shards", new JSONArray(Arrays.deepToString(shardGuildCounts.toArray())));
 
 
         HashMap<String, String> authHashMap = auth.getAuthHashMap();
