@@ -1,12 +1,11 @@
 # BotBlock4J
 [ ![Download](https://api.bintray.com/packages/nathan-webb/maven/BotBlock4J/images/download.svg) ](https://bintray.com/nathan-webb/maven/BotBlock4J/_latestVersion)
 
+#### API wrapper for [BotBlock](https://botblock.org), a site that removes the hassle from managing multiple Discord bot list APIs. You can view the full list of Discord bot list APIs that BotBlock, and by extension this wrapper, supports on the [BotBlock API docs](https://botblock.org/api/docs#count).
 
-##### Api wrapper for `https://botblock.org`, a site that removes the hassle from managing multiple Discord List APIs
-
+##### The first argument passed into `BlockAuth.setListAuthToken()` should be the site ID from the [BotBlock docs](https://botblock.org/api/docs#count).
 
 ## Download
-
 
 You have three options for implementing the API.
 
@@ -25,7 +24,6 @@ dependencies {
 
 ##### Maven:
 
-
 ```xml
 <dependency>
   <groupId>com.nathanwebb</groupId>
@@ -37,7 +35,6 @@ dependencies {
 
 ##### Ivy:
 
-
 ```text
 <dependency org='com.nathanwebb' name='BotBlock4J' rev='LATEST-VERSION-HERE'>
   <artifact name='BotBlock4J' ext='pom' ></artifact>
@@ -48,7 +45,6 @@ dependencies {
 
 Alternatively, you could just head over to `https://bintray.com/nathan-webb/maven/BotBlock4J/_latestVersion`
 and download the jar file yourself.
-
 
 ## Usage
 
@@ -69,7 +65,6 @@ api.stopSendingGuildCounts(); //stops the timer
 api.startSendingGuildCounts(); //starts it again
 ```
 
-
 #### Send the Guild count manually.
 ```java
 BlockAuth auth = new BlockAuth();
@@ -85,6 +80,3 @@ auth.setListAuthToken("botsfordiscord.com", "token-here");
 //...
 BotBlockRequests.postGuilds("bot-id-here", 100, auth);
 ```
-
-
-
