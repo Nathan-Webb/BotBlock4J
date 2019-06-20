@@ -60,14 +60,13 @@ You can use the BlockAuth.Builder() to create an instance easy.
 /*
  * We can use BlockAuth.Builder() to add sites to the HashMap of lists
  *
- * You can use addListAuthToken(String, String) or addListAuthToken(Site, String)
- * and add as many as you like.
+ * You can use addListAuthToken(String, String) and add as many as you like.
  *
  * Don't forget to call .build(); at the end to build the BlockAuth instance
  */
 BlockAuth auth = new BlockAuth.Builder()
     .addListAuthToken("botsfordiscord.com", "MyS3cr3tT0k3n")
-    .addListAuthToken(Site.LBOTS_ORG, "My0t3rS3cr3tT0k3n")
+    .addListAuthToken("lbots.org", "My0th3rS3cr3tT0k3n")
     .build();
 ```
 
@@ -78,9 +77,7 @@ BlockAuth auth = new BlockAuth();
 
 // We have to call this method for each list.
 auth.setListAuthToken("botsfordiscord.com", "MyS3cr3tT0k3n");
-
-// We can also use Site.SITENAME for convenience.
-auth.setListAuthToken(Site.LBOTS_ORG, "My0t3rS3cr3tT0k3n");
+auth.setListAuthToken("lbots.org", "My0th3rS3cr3tT0k3n")
 ```
 
 ### Posting stats
@@ -132,7 +129,7 @@ BotBlockRequests.postGuilds(1234567890L, guilds, auth);
 ```
 
 ### Errors
-The above methods can throw those methods:  
+The above methods can throw those Exceptions:
 - `FailedToSendException`  
 Thrown when one or more sites returned errors while posting. 
 - `EmptyResponseException`  
