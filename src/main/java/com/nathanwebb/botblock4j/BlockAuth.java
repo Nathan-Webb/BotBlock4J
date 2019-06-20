@@ -80,12 +80,12 @@ public class BlockAuth {
         return authHashMap;
     }
 
-    private void isNotNull(Object object, String name){
+    private static void isNotNull(Object object, String name){
         if(object == null)
             throw new IllegalStateException(name + " may not be null.");
     }
 
-    public class Builder{
+    public static class Builder{
         private Map<String, String> authTokens = new HashMap<>();
 
         /**
