@@ -9,7 +9,7 @@
 # BotBlock4J
 [![badge]][download]
 
-API wrapper for [BotBlock], a site that removes the hassle from managing multiple Discord bot list APIs.
+API wrapper for [BotBlock], a site that removes the hassle from managing multiple Discord bot list APIs.  
 You can view the full list of Discord bot list APIs that BotBlock, and by extension this wrapper, supports on the [BotBlock API docs][api].
 
 ## Download
@@ -46,8 +46,7 @@ dependencies {
 
 ##### Other:
 
-Alternatively, you could just head over to `https://bintray.com/nathan-webb/maven/BotBlock4J/_latestVersion`
-and download the jar file yourself.
+Alternatively, you could just head over to the [Bintray Site][download] and download the jar file yourself.
 
 ## Usage
 **Note**: You can also provide an instance of `ShardManager` instead of `JDA`
@@ -56,7 +55,7 @@ and download the jar file yourself.
 We have to create a [BlockAuth] instance to provide it later for the post requests.
 
 #### Using the Builder (Recommended)
-You can use the BlockAuth.Builder() to create an instance easy.
+You can use the BlockAuth.Builder() to create an instance easy.  
 ```java
 /*
  * We can use BlockAuth.Builder() to add sites to the HashMap of lists
@@ -73,7 +72,7 @@ BlockAuth auth = new BlockAuth.Builder()
 ```
 
 #### Set manually
-If you want to set it manually you can just use `setListAuthToken(String, String)` directly.
+If you want to set it manually you can just use `setListAuthToken(String, String)` directly.  
 ```java
 BlockAuth auth = new BlockAuth();
 
@@ -85,13 +84,13 @@ auth.setListAuthToken(Site.LBOTS_ORG, "My0t3rS3cr3tT0k3n");
 ```
 
 ### Posting stats
-There are three different types of methods you can use, depending on your preferences.
+There are three different types of methods you can use, depending on your preferences.  
 All methods require you to have the [BlockAuth instance](#creating-a-blockauth-instance) set up.
 
 All shown examples use an BlockAuth called `auth` and a JDA instance called `jda` or ShardManager called `shardManager`.
 
 #### Post every X minutes
-You can let BotBlock4J post stats automatically every X minutes.
+You can let BotBlock4J post stats automatically every X minutes.  
 ```java
 /*
  * Create an instance of BotBlockAPI.
@@ -111,7 +110,7 @@ api.stopSendingGuildCounts();
 ```
 
 #### Manually
-If you want to send the guild count manually you can use one of those methods.
+If you want to send the guild count manually you can use one of those methods.  
 ```java
 // Posts the guild count of the provided JDA instance
 BotBlockRequests.postGuildsJDA(jda, auth);
@@ -121,7 +120,7 @@ BotBlockRequests.postGuildsShardManager(shardManager, auth);
 ```
 
 #### Sending without an instance
-If you don't want to provide a JDA or ShardManager instance you can use one of those methods here:
+If you don't want to provide a JDA or ShardManager instance you can use one of those methods here:  
 ```java
 int guilds = 100;
 
@@ -133,12 +132,12 @@ BotBlockRequests.postGuilds(1234567890L, guilds, auth);
 ```
 
 ### Errors
-The above methods can throw those methods:
-- `FailedToSendException`
-Thrown when one or more sites returned errors while posting.
-- `EmptyResponseException`
+The above methods can throw those methods:  
+- `FailedToSendException`  
+Thrown when one or more sites returned errors while posting. 
+- `EmptyResponseException`  
 When the BotBlockAPI returns an empty JSON body.
-- `RateLimitException`
+- `RateLimitException`  
 When the Request was ratelimited.
-- `IOException`
+- `IOException`  
 When the connection drops/was cancelled.
