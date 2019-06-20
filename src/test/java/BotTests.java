@@ -1,8 +1,8 @@
-import com.nathanwebb.BotBlock4J.BlockAuth;
-import com.nathanwebb.BotBlock4J.BotBlockRequests;
-import com.nathanwebb.BotBlock4J.exceptions.EmptyResponseException;
-import com.nathanwebb.BotBlock4J.exceptions.FailedToSendException;
-import com.nathanwebb.BotBlock4J.exceptions.RateLimitedException;
+import com.nathanwebb.botblock4j.BlockAuth;
+import com.nathanwebb.botblock4j.BotBlockRequests;
+import com.nathanwebb.botblock4j.exceptions.EmptyResponseException;
+import com.nathanwebb.botblock4j.exceptions.FailedToSendException;
+import com.nathanwebb.botblock4j.exceptions.RateLimitedException;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;

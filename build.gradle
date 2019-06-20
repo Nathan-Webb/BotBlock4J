@@ -1,11 +1,10 @@
-
 plugins {
     id "com.jfrog.bintray" version "1.8.4"
 }
 
 
-group 'com.nathanwebb'
-version '1.0.1'
+group = 'com.nathanwebb'
+version = '1.0.1'
 
 apply plugin: 'java'
 apply plugin: 'maven'

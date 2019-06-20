@@ -16,11 +16,11 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.nathanwebb.BotBlock4J;
+package com.nathanwebb.botblock4j;
 
-import com.nathanwebb.BotBlock4J.exceptions.EmptyResponseException;
-import com.nathanwebb.BotBlock4J.exceptions.FailedToSendException;
-import com.nathanwebb.BotBlock4J.exceptions.RateLimitedException;
+import com.nathanwebb.botblock4j.exceptions.EmptyResponseException;
+import com.nathanwebb.botblock4j.exceptions.FailedToSendException;
+import com.nathanwebb.botblock4j.exceptions.RateLimitedException;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 
@@ -44,7 +44,8 @@ public class BotBlockAPI {
 
 
     /**
-     * @param shardManager Manager used for sharding.
+     * @param shardManager
+     *        An instance of the {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager}.
      */
     public BotBlockAPI(ShardManager shardManager){
         this.shardManager = shardManager;
@@ -52,9 +53,12 @@ public class BotBlockAPI {
 
 
     /**
-     * @param shardManager Manager used for sharding.
-     * @param startInterval Should the API start the timer to post guild count updates.
-     * @param blockAuth Authorization object
+     * @param shardManager
+     *        An instance of the {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager}.
+     * @param startInterval
+     *        Should the API start the timer to post guild count updates.
+     * @param blockAuth
+     *        An instance of {@link com.nathanwebb.botblock4j.BlockAuth BlockAuth}.
      */
     public BotBlockAPI(ShardManager shardManager, boolean startInterval, BlockAuth blockAuth){
         this.blockAuth = blockAuth;
@@ -64,10 +68,14 @@ public class BotBlockAPI {
     }
 
     /**
-     * @param shardManager Manager used for sharding.
-     * @param startInterval Should the API start the timer to post guild count updates.
-     * @param blockAuth Authorization object
-     * @param updateInterval Number of minutes the api should wait before posting guild count updates.
+     * @param shardManager
+     *        An instance of the {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager}.
+     * @param startInterval
+     *        Should the API start the timer to post guild count updates.
+     * @param blockAuth
+     *        An instance of {@link com.nathanwebb.botblock4j.BlockAuth BlockAuth}.
+     * @param updateInterval
+     *        Number of minutes the api should wait before posting guild count updates.
      */
     public BotBlockAPI(ShardManager shardManager, boolean startInterval, BlockAuth blockAuth, int updateInterval){
         this.blockAuth = blockAuth;
@@ -78,16 +86,20 @@ public class BotBlockAPI {
     }
 
     /**
-     * @param jda Bot JDA
+     * @param jda
+     *        An instance of the {@link net.dv8tion.jda.core.JDA JDA}.
      */
     public BotBlockAPI(JDA jda){
         this.jda = jda;
     }
 
     /**
-     * @param jda Bot JDA
-     * @param startInterval Should the API start the timer to post guild count updates.
-     * @param blockAuth Authorization object
+     * @param jda
+     *        An instance of {@link net.dv8tion.jda.core.JDA JDA}.
+     * @param startInterval
+     *        Should the API start the timer to post guild count updates.
+     * @param blockAuth
+     *        An instance of {@link com.nathanwebb.botblock4j.BlockAuth BlockAuth}.
      */
     public BotBlockAPI(JDA jda, boolean startInterval, BlockAuth blockAuth){
         this.jda = jda;
@@ -97,10 +109,14 @@ public class BotBlockAPI {
     }
 
     /**
-     * @param jda Bot JDA
-     * @param startInterval Should the API start the timer to post guild count updates.
-     * @param blockAuth Authorization object
-     * @param updateInterval Minutes between each guild update. Must be greater than
+     * @param jda
+     *        An instance of {@link net.dv8tion.jda.core.JDA JDA}.
+     * @param startInterval
+     *        Should the API start the timer to post guild count updates.
+     * @param blockAuth
+     *        An instance of {@link com.nathanwebb.botblock4j.BlockAuth BlockAuth}.
+     * @param updateInterval
+     *        Number of minutes the api should wait before posting guild count updates.
      */
     public BotBlockAPI(JDA jda, boolean startInterval, BlockAuth blockAuth, int updateInterval){
         this.jda = jda;
@@ -112,66 +128,76 @@ public class BotBlockAPI {
 
     /**
      * The BlockAuth should have at least one bot list added.
-     * @param blockAuth Authorization object
+     *
+     * @param blockAuth
+     *        An instance of {@link com.nathanwebb.botblock4j.BlockAuth BlockAuth}.
      */
     public void setblockAuth(BlockAuth blockAuth){
         this.blockAuth = blockAuth;
     }
 
     /**
-     * Sets the Shard Manager that will be used when sending requests.
-     * @param shardManager Manager used for sharding.
+     * Sets the {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager} that will be used when sending requests.
+     *
+     * @param shardManager
+     *        An instance of the {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager}.
      */
     public void setShardManager(ShardManager shardManager){
         this.shardManager = shardManager;
     }
 
     /**
-     * Sets the JDA to be used when sending requests.
-     * @param jda Bot JDA
+     * Sets the {@link net.dv8tion.jda.core.JDA JDA} that will be used when sending requests.
+     *
+     * @param jda
+     *        An instance of {@link net.dv8tion.jda.core.JDA JDA}.
      */
     public void setJda(JDA jda){
         this.jda = jda;
     }
 
     /**
-     * Sets the timeout between sending guild counts.
-     * @param updateInterval Interval between guild count updates.
-     * @throws IllegalArgumentException If the int is less than 1.
+     * Sets the delay between sending guild counts.
+     *
+     * @param updateInterval
+     *        Interval between guild count updates in minutes.
+     *
+     * @throws IllegalArgumentException
+     *         If the int is less than 1.
      */
     public void setUpdateInterval(int updateInterval) throws IllegalArgumentException{
-        if(updateInterval < 1){
+        if(updateInterval < 1)
             throw new IllegalArgumentException("The amount of minutes between POST Requests must be at least 1.");
-        }
+
         this.updateInterval = updateInterval;
     }
 
 
     /**
      * Starts the guild counter.
-     * @throws IllegalStateException If neither a JDA instance nor a Shard Manager are initialized.
+     *
+     * @throws IllegalStateException
+     *         If neither a JDA instance nor a ShardManager are initialized.
      */
     public void startSendingGuildCounts() throws IllegalStateException{
-        scheduler.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                if(shardManager !=null){
-                    try {
-                        BotBlockRequests.postGuildsShardManager(shardManager, blockAuth);
-                    } catch (FailedToSendException | EmptyResponseException | RateLimitedException | IOException e) {
-                        e.printStackTrace();
-                    }
-                } else if(jda != null){
-                    try {
-                        BotBlockRequests.postGuildsJDA(jda, blockAuth);
-                    } catch (FailedToSendException | EmptyResponseException | RateLimitedException | IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    throw new IllegalStateException("There is no available JDA instance to use!");
+        scheduler.scheduleAtFixedRate(() -> {
+            if(shardManager !=null){
+                try {
+                    BotBlockRequests.postGuildsShardManager(shardManager, blockAuth);
+                } catch (FailedToSendException | EmptyResponseException | RateLimitedException | IOException e) {
+                    e.printStackTrace();
                 }
-           }
-        }, updateInterval, updateInterval, TimeUnit.MINUTES);
+            }else
+            if(jda != null){
+                try {
+                    BotBlockRequests.postGuildsJDA(jda, blockAuth);
+                } catch (FailedToSendException | EmptyResponseException | RateLimitedException | IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                throw new IllegalStateException("No ShardManager nor JDA instance was provided!");
+            }
+       }, updateInterval, updateInterval, TimeUnit.MINUTES);
     }
 
     /**

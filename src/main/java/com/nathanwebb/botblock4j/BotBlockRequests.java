@@ -16,11 +16,11 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.nathanwebb.BotBlock4J;
+package com.nathanwebb.botblock4j;
 
-import com.nathanwebb.BotBlock4J.exceptions.EmptyResponseException;
-import com.nathanwebb.BotBlock4J.exceptions.FailedToSendException;
-import com.nathanwebb.BotBlock4J.exceptions.RateLimitedException;
+import com.nathanwebb.botblock4j.exceptions.EmptyResponseException;
+import com.nathanwebb.botblock4j.exceptions.FailedToSendException;
+import com.nathanwebb.botblock4j.exceptions.RateLimitedException;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import okhttp3.*;
@@ -38,14 +38,22 @@ public class BotBlockRequests {
     private static String baseURL = "https://botblock.org/api/";
 
     /**
-     * Posts the guild total given a Shard Manager.
-     * The User Agent is {@code Discord Bot (user-id)}
-     * @param shardManager Manager used when sharding.
-     * @param auth BlockAuth object with all necessary values.
-     * @throws FailedToSendException If one or more lists returned errors when posting.
-     * @throws EmptyResponseException If BotBlock api does something funny and returns an empty JSON body.
-     * @throws IOException If the connection drops/is cancelled.
-     * @throws RateLimitedException If we are being ratelimited.
+     * Posts the guild total of the given {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager}.
+     * <br>The User Agent is the ID of the bot.
+     *
+     * @param shardManager
+     *        An instance of the {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager}.
+     * @param auth
+     *        An instance of {@link com.nathanwebb.botblock4j.BlockAuth BlockAuth}.
+     *
+     * @throws FailedToSendException
+     *         If one or more lists returned errors when posting.
+     * @throws EmptyResponseException
+     *         If BotBlock api does something funny and returns an empty JSON body.
+     * @throws IOException
+     *         If the connection drops/is cancelled.
+     * @throws RateLimitedException
+     *         If we are being ratelimited.
      */
     public static void postGuildsShardManager(ShardManager shardManager, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
         String url = baseURL + "count";
@@ -62,7 +70,7 @@ public class BotBlockRequests {
         data.put("shards", new JSONArray(Arrays.deepToString(shardGuildCounts.toArray())));
 
 
-        HashMap<String, String> authHashMap = auth.getAuthHashMap();
+        Map<String, String> authHashMap = auth.getAuthHashMap();
         authHashMap.forEach(data::put);
 
         RequestBody body = RequestBody.create(null, data.toString());
@@ -76,15 +84,25 @@ public class BotBlockRequests {
     }
 
     /**
-     * Posts the guild total given a JDA instance. If the instance is one that is sharding,
-     * it will send the current shard ID as well as the total number of shards.
-     * The User Agent is {@code Discord Bot (user-id)}
-     * @param jda Instance that is used with the discord API.
-     * @param auth BlockAuth object with all necessary values.
-     * @throws FailedToSendException If one or more lists returned errors when posting.
-     * @throws EmptyResponseException If BotBlock api does something funny and returns an empty JSON body.
-     * @throws IOException If the connection drops/is cancelled.
-     * @throws RateLimitedException If we are being ratelimited.
+     * Posts the guild total of the provided {@link net.dv8tion.jda.core.JDA JDA instance}.
+     * <br>If the instance of JDA is part of sharding, the current shard id and shard total will be send too.
+     * <br>
+     * <br><b>If you shard your bot, use {@link #postGuildsShardManager(ShardManager, BlockAuth)} instead.</b>
+     * <br>The User Agent is the id of the bot.
+     *
+     * @param jda
+     *        An instance of {@link net.dv8tion.jda.core.JDA JDA}.
+     * @param auth
+     *        An instance of {@link com.nathanwebb.botblock4j.BlockAuth BlockAuth}.
+     *
+     * @throws FailedToSendException
+     *         If one or more lists returned errors when posting.
+     * @throws EmptyResponseException
+     *         If BotBlock api does something funny and returns an empty JSON body.
+     * @throws IOException
+     *         If the connection drops/is cancelled.
+     * @throws RateLimitedException
+     *         If we are being ratelimited.
      */
     public static void postGuildsJDA(JDA jda, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
         String url = baseURL + "count";
@@ -97,7 +115,7 @@ public class BotBlockRequests {
             data.put("shard_id", jda.getShardInfo().getShardId());
             data.put("shard_count", jda.getShardInfo().getShardTotal());
         }
-        HashMap<String, String> authHashMap = auth.getAuthHashMap();
+        Map<String, String> authHashMap = auth.getAuthHashMap();
         authHashMap.forEach(data::put);
 
         RequestBody body = RequestBody.create(null, data.toString());
@@ -111,46 +129,50 @@ public class BotBlockRequests {
     }
 
     /**
-     * Posts to the BotBlock API given a String User ID and integer representing the # of servers.
-     * The User Agent is {@code Discord Bot (user-id)}
-     * @param botId The ID of the bot you want to post data for.
-     * @param servers Total amount of servers this bot is in.
-     * @param auth BlockAuth object with all necessary values.
-     * @throws FailedToSendException If one or more lists returned errors when posting.
-     * @throws EmptyResponseException If BotBlock api does something funny and returns an empty JSON body.
-     * @throws IOException If the connection drops/is cancelled.
-     * @throws RateLimitedException If we are being ratelimited.
+     * Posts to the BotBlock API with the provided bot ID and the amount of servers.
+     * <br>The User Agent is the id of the bot.
+     *
+     * @param botId
+     *        The ID of the bot you want to post data for as String.
+     * @param servers
+     *        Total amount of servers this bot is in.
+     * @param auth
+     *        An instance of {@link com.nathanwebb.botblock4j.BlockAuth BlockAuth}.
+     *
+     * @throws FailedToSendException
+     *         If one or more lists returned errors when posting.
+     * @throws EmptyResponseException
+     *         If BotBlock api does something funny and returns an empty JSON body.
+     * @throws IOException
+     *         If the connection drops/is cancelled.
+     * @throws RateLimitedException
+     *         If we are being ratelimited.
+     *
+     * @see #postGuilds(long, int, BlockAuth)
      */
     public static void postGuilds(String botId, int servers, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
-        String url = baseURL + "count";
-
-        JSONObject data = new JSONObject();
-
-        data.put("server_count", servers);
-        data.put("bot_id", botId);
-        HashMap<String, String> authHashMap = auth.getAuthHashMap();
-        authHashMap.forEach(data::put);
-
-        RequestBody body = RequestBody.create(null, data.toString());
-        Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .addHeader("User-Agent", botId)
-                .addHeader("Content-Type", "application/json")
-                .build();
-        postGuildRequest(request);
+        postGuilds(Long.parseLong(botId), servers, auth);
     }
 
     /**
      * Posts to the BotBlock API given a long User ID and integer representing the # of servers.
      * The User-Agent is {@code Discord Bot (user-id)}
-     * @param botId The ID of the bot you want to post data for.
-     * @param servers Total amount of servers this bot is in.
-     * @param auth BlockAuth object with all necessary values.
-     * @throws FailedToSendException If one or more lists returned errors when posting.
-     * @throws EmptyResponseException If BotBlock api does something funny and returns an empty JSON body.
-     * @throws IOException If the connection drops/is cancelled.
-     * @throws RateLimitedException If we are being ratelimited.
+     *
+     * @param botId
+     *        The ID of the bot you want to post data for.
+     * @param servers
+     *        Total amount of servers this bot is in.
+     * @param auth
+     *        An instance of {@link com.nathanwebb.botblock4j.BlockAuth BlockAuth}.
+     *
+     * @throws FailedToSendException
+     *         If one or more lists returned errors when posting.
+     * @throws EmptyResponseException
+     *         If BotBlock api does something funny and returns an empty JSON body.
+     * @throws IOException
+     *         If the connection drops/is cancelled.
+     * @throws RateLimitedException
+     *         If we are being ratelimited.
      */
     public static void postGuilds(long botId, int servers, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
         String url = baseURL + "count";
@@ -159,7 +181,7 @@ public class BotBlockRequests {
 
         data.put("server_count", servers);
         data.put("bot_id", Long.toString(botId));
-        HashMap<String, String> authHashMap = auth.getAuthHashMap();
+        Map<String, String> authHashMap = auth.getAuthHashMap();
         authHashMap.forEach(data::put);
 
         RequestBody body = RequestBody.create(null, data.toString());
@@ -173,12 +195,19 @@ public class BotBlockRequests {
     }
 
     /**
-     * This is just some boilerplate code to post the guild count given a {@code Request.}
-     * @param request To be executed.
-     * @throws FailedToSendException If one or more lists returned errors when posting.
-     * @throws EmptyResponseException If BotBlock api does something funny and returns an empty JSON body.
-     * @throws IOException If the connection drops/is cancelled.
-     * @throws RateLimitedException If we are being ratelimited.
+     * This is just some boilerplate code to post the guild count with the given {@link okhttp3.Request Request}.
+     *
+     * @param request
+     *        The {@link okhttp3.Request Request} to execute.
+     *
+     * @throws FailedToSendException
+     *         If one or more lists returned errors when posting.
+     * @throws EmptyResponseException
+     *         If BotBlock api does something funny and returns an empty JSON body.
+     * @throws IOException
+     *         If the connection drops/is cancelled.
+     * @throws RateLimitedException
+     *         If we are being ratelimited.
      */
     private static void postGuildRequest(Request request) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
         Response response = new OkHttpClient().newCall(request).execute();
@@ -186,20 +215,20 @@ public class BotBlockRequests {
 
         //check to make sure we actually got a response
         if(responseBody != null) {
-            String responseString = responseBody.string();
+            String responseMsg = responseBody.string();
             if(response.code() == 429){
-                throw new RateLimitedException(responseString);
+                throw new RateLimitedException(responseMsg);
             }
-            JSONObject responseObject = new JSONObject(responseString);
+            JSONObject responseObject = new JSONObject(responseMsg);
 
             if(!responseObject.get("failure").toString().equals("[]")) { //if there is a failed server POST attempt
                 JSONObject failures = responseObject.getJSONObject("failure");
                     List<String> botLists = new ArrayList<>();
                     for (String listFailureKey : failures.keySet()) {
-                        try {
+                        try{
                             JSONArray failedListArray = failures.getJSONArray(listFailureKey);
                             botLists.add("List name: " + listFailureKey + " Error Code: " + failedListArray.getInt(0) + " Error Message: " + failedListArray.getString(1));
-                        } catch (JSONException e){
+                        }catch(JSONException e){
                             Map<String, Object> notFound = failures.toMap();
                             botLists.add("Errors: " + notFound.toString());
                         }
