@@ -55,7 +55,7 @@ public class BotBlockRequests {
      * @throws RateLimitedException
      *         If we are being ratelimited.
      */
-    public static void postGuildsShardManager(ShardManager shardManager, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
+    public static void postGuilds(ShardManager shardManager, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
         String url = baseURL + "count";
 
         JSONObject data = new JSONObject();
@@ -87,7 +87,7 @@ public class BotBlockRequests {
      * Posts the guild total of the provided {@link net.dv8tion.jda.core.JDA JDA instance}.
      * <br>If the instance of JDA is part of sharding, the current shard id and shard total will be send too.
      * <br>
-     * <br><b>If you shard your bot, use {@link #postGuildsShardManager(ShardManager, BlockAuth)} instead.</b>
+     * <br><b>If you shard your bot, use {@link #postGuilds(ShardManager, BlockAuth)} instead.</b>
      * <br>The User Agent is the id of the bot.
      *
      * @param jda
@@ -104,7 +104,7 @@ public class BotBlockRequests {
      * @throws RateLimitedException
      *         If we are being ratelimited.
      */
-    public static void postGuildsJDA(JDA jda, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
+    public static void postGuilds(JDA jda, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
         String url = baseURL + "count";
 
         JSONObject data = new JSONObject();

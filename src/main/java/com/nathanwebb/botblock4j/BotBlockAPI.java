@@ -183,14 +183,14 @@ public class BotBlockAPI {
         scheduler.scheduleAtFixedRate(() -> {
             if(shardManager !=null){
                 try {
-                    BotBlockRequests.postGuildsShardManager(shardManager, blockAuth);
+                    BotBlockRequests.postGuilds(shardManager, blockAuth);
                 } catch (FailedToSendException | EmptyResponseException | RateLimitedException | IOException e) {
                     e.printStackTrace();
                 }
             }else
             if(jda != null){
                 try {
-                    BotBlockRequests.postGuildsJDA(jda, blockAuth);
+                    BotBlockRequests.postGuilds(jda, blockAuth);
                 } catch (FailedToSendException | EmptyResponseException | RateLimitedException | IOException e) {
                     e.printStackTrace();
                 }
