@@ -23,14 +23,14 @@ import org.json.JSONObject;
 /**
  * Happens when we are ratelimited by the api.
  */
-public class RateLimitedException extends BotBlockException {
+public class RatelimitException extends BotBlockException {
     private String ratelimitedIp;
     private String ratelimitedRoute;
     private String ratelimitedBotId;
     private int secondsTilRetry;
     private long ratelimitReset;
 
-    public RateLimitedException(String jsonRatelimit){
+    public RatelimitException(String jsonRatelimit){
         JSONObject ratelimited = new JSONObject(jsonRatelimit);
         ratelimitedIp = ratelimited.getString("ratelimit_ip");
         ratelimitedRoute = ratelimited.getString("ratelimit_route");

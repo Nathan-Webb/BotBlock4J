@@ -20,7 +20,7 @@ package com.nathanwebb.botblock4j;
 
 import com.nathanwebb.botblock4j.exceptions.EmptyResponseException;
 import com.nathanwebb.botblock4j.exceptions.FailedToSendException;
-import com.nathanwebb.botblock4j.exceptions.RateLimitedException;
+import com.nathanwebb.botblock4j.exceptions.RatelimitException;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import okhttp3.*;
@@ -36,7 +36,8 @@ import java.util.*;
  * Contains all the methods for interacting with the BotBlock API.
  */
 public class BotBlockRequests {
-    private static String baseURL = "https://botblock.org/api/";
+    private static String baseURL = "https://botblock.org/api/count";
+    private static final OkHttpClient CLIENT = new OkHttpClient();
 
     /**
      * Posts the guild total of the given {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager}.
@@ -53,12 +54,10 @@ public class BotBlockRequests {
      *         If BotBlock api does something funny and returns an empty JSON body.
      * @throws IOException
      *         If the connection drops/is cancelled.
-     * @throws RateLimitedException
+     * @throws RatelimitException
      *         If we are being ratelimited.
      */
-    public static void postGuilds(ShardManager shardManager, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
-        String url = baseURL + "count";
-
+    public static void postGuilds(ShardManager shardManager, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RatelimitException, IOException{
         JSONObject data = new JSONObject();
         data.put("server_count", shardManager.getGuilds().size());
         data.put("bot_id", shardManager.getShardById(0).getSelfUser().getId());
@@ -76,7 +75,7 @@ public class BotBlockRequests {
 
         RequestBody body = RequestBody.create(null, data.toString());
         Request request = new Request.Builder()
-                .url(url)
+                .url(baseURL)
                 .post(body)
                 .addHeader("User-Agent", shardManager.getShardById(0).getSelfUser().getId())
                 .addHeader("Content-Type", "application/json")
@@ -102,12 +101,10 @@ public class BotBlockRequests {
      *         If BotBlock api does something funny and returns an empty JSON body.
      * @throws IOException
      *         If the connection drops/is cancelled.
-     * @throws RateLimitedException
+     * @throws RatelimitException
      *         If we are being ratelimited.
      */
-    public static void postGuilds(JDA jda, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
-        String url = baseURL + "count";
-
+    public static void postGuilds(JDA jda, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RatelimitException, IOException{
         JSONObject data = new JSONObject();
 
         data.put("server_count", jda.getGuilds().size());
@@ -121,7 +118,7 @@ public class BotBlockRequests {
 
         RequestBody body = RequestBody.create(null, data.toString());
         Request request = new Request.Builder()
-                .url(url)
+                .url(baseURL)
                 .post(body)
                 .addHeader("User-Agent", jda.getSelfUser().getId())
                 .addHeader("Content-Type", "application/json")
@@ -146,14 +143,14 @@ public class BotBlockRequests {
      *         If BotBlock api does something funny and returns an empty JSON body.
      * @throws IOException
      *         If the connection drops/is cancelled.
-     * @throws RateLimitedException
+     * @throws RatelimitException
      *         If we are being ratelimited.
      * @throws IllegalStateException
      *         When the provided String is not a Number.
      *
      * @see #postGuilds(long, int, BlockAuth)
      */
-    public static void postGuilds(String botId, int servers, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
+    public static void postGuilds(String botId, int servers, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RatelimitException, IOException{
         if(!NumberUtils.isCreatable(botId))
             throw new IllegalStateException("The provided String wasn't a Number!");
 
@@ -177,12 +174,10 @@ public class BotBlockRequests {
      *         If BotBlock api does something funny and returns an empty JSON body.
      * @throws IOException
      *         If the connection drops/is cancelled.
-     * @throws RateLimitedException
+     * @throws RatelimitException
      *         If we are being ratelimited.
      */
-    public static void postGuilds(long botId, int servers, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
-        String url = baseURL + "count";
-
+    public static void postGuilds(long botId, int servers, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RatelimitException, IOException{
         JSONObject data = new JSONObject();
 
         data.put("server_count", servers);
@@ -192,7 +187,7 @@ public class BotBlockRequests {
 
         RequestBody body = RequestBody.create(null, data.toString());
         Request request = new Request.Builder()
-                .url(url)
+                .url(baseURL)
                 .post(body)
                 .addHeader("User-Agent", Long.toString(botId))
                 .addHeader("Content-Type", "application/json")
@@ -212,18 +207,18 @@ public class BotBlockRequests {
      *         If BotBlock api does something funny and returns an empty JSON body.
      * @throws IOException
      *         If the connection drops/is cancelled.
-     * @throws RateLimitedException
+     * @throws RatelimitException
      *         If we are being ratelimited.
      */
-    private static void postGuildRequest(Request request) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
-        Response response = new OkHttpClient().newCall(request).execute();
+    private static void postGuildRequest(Request request) throws FailedToSendException, EmptyResponseException, RatelimitException, IOException{
+        Response response = CLIENT.newCall(request).execute();
         ResponseBody responseBody = response.body();
 
         //check to make sure we actually got a response
         if(responseBody != null) {
             String responseMsg = responseBody.string();
             if(response.code() == 429){
-                throw new RateLimitedException(responseMsg);
+                throw new RatelimitException(responseMsg);
             }
             JSONObject responseObject = new JSONObject(responseMsg);
 
