@@ -27,6 +27,7 @@ dependencies {
     compile ('net.dv8tion:JDA:3.6.0_368'){
         exclude module: 'opus-java'
     }
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
 
 }
 

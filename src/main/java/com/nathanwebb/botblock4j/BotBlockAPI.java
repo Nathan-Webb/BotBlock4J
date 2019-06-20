@@ -175,6 +175,8 @@ public class BotBlockAPI {
 
     /**
      * Starts the guild counter.
+     * <br>The wrapper prioritizes the {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager} over the
+     * {@link net.dv8tion.jda.core.JDA JDA} when both are set.
      *
      * @throws IllegalStateException
      *         If neither a JDA instance nor a ShardManager are initialized.
@@ -195,7 +197,7 @@ public class BotBlockAPI {
                     e.printStackTrace();
                 }
             } else {
-                throw new IllegalStateException("No ShardManager nor JDA instance was provided!");
+                throw new IllegalStateException("Neither ShardManager nor JDA instance was provided!");
             }
        }, updateInterval, updateInterval, TimeUnit.MINUTES);
     }

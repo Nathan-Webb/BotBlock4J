@@ -24,6 +24,7 @@ import com.nathanwebb.botblock4j.exceptions.RateLimitedException;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import okhttp3.*;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -147,10 +148,15 @@ public class BotBlockRequests {
      *         If the connection drops/is cancelled.
      * @throws RateLimitedException
      *         If we are being ratelimited.
+     * @throws IllegalStateException
+     *         When the provided String is not a Number.
      *
      * @see #postGuilds(long, int, BlockAuth)
      */
     public static void postGuilds(String botId, int servers, BlockAuth auth) throws FailedToSendException, EmptyResponseException, RateLimitedException, IOException{
+        if(!NumberUtils.isCreatable(botId))
+            throw new IllegalStateException("The provided String wasn't a Number!");
+
         postGuilds(Long.parseLong(botId), servers, auth);
     }
 

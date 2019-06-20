@@ -18,6 +18,8 @@
  */
 package com.nathanwebb.botblock4j;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,17 +47,20 @@ public class BlockAuth {
      * Sets the authorization token for the given site. You may receive a API-token from the botlist-site.
      * <br><b>If the value has already been set in the preceding code, the value will be overwritten.</b>
      *
-     * @param listURL
+     * @param url
      *        The URL of the botlist. This must be without any subdomain nor subpages.
      *        <br>Example: {@code google.com} instead of {@code https://google.com/subsite}.
      * @param authToken
      *        The token that you would normally put in your {@code Authorization} header if you were doing this manually.
+     *
+     * @throws IllegalStateException
+     *         When either the url or the authToken are empty/null.
      */
-    public void setListAuthToken(String listURL, String authToken){
-        isNotNull(listURL, "url");
-        isNotNull(authToken, "authToken");
+    public void setListAuthToken(String url, String authToken){
+        if(!ObjectUtils.allNotNull(url, authToken))
+            throw new IllegalStateException("url and authToken may not be null.");
 
-        authHashMap.put(listURL.replaceAll("^https?://", ""), authToken);
+        authHashMap.put(url.replaceAll("^https?://", ""), authToken);
     }
 
     /**
@@ -65,11 +70,6 @@ public class BlockAuth {
      */
     public Map<String, String> getAuthHashMap() {
         return authHashMap;
-    }
-
-    private static void isNotNull(Object object, String name){
-        if(object == null)
-            throw new IllegalStateException(name + " may not be null.");
     }
 
     public static class Builder{
@@ -85,11 +85,14 @@ public class BlockAuth {
          * @param  authToken
          *         The token that you would normally put in your {@code Authorization} header if you were doing this manually.
          *
+         * @throws IllegalStateException
+         *         When either the url or the authToken are empty/null.
+         *
          * @return The Builder after the url and token have been added.
          */
         public Builder addListAuthToken(String url, String authToken){
-            isNotNull(url, "url");
-            isNotNull(authToken, "authToken");
+            if(!ObjectUtils.allNotNull(url, authToken))
+                throw new IllegalStateException("url and authToken may not be null.");
 
             authTokens.put(url.replaceAll("^https?://", ""), authToken);
 
@@ -103,7 +106,7 @@ public class BlockAuth {
          */
         public BlockAuth build(){
             if(authTokens.isEmpty())
-                throw new IllegalStateException("authTokens may not be empty!");
+                throw new IllegalStateException("Empty authTokens Map is not allowed!");
 
             return new BlockAuth(authTokens);
         }
