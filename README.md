@@ -110,10 +110,10 @@ api.stopSendingGuildCounts();
 If you want to send the guild count manually you can use one of those methods.  
 ```java
 // Posts the guild count of the provided JDA instance
-BotBlockRequests.postGuildsJDA(jda, auth);
+BotBlockRequests.postGuilds(jda, auth);
 
 // Posts the guild count of the provided ShardManager.
-BotBlockRequests.postGuildsShardManager(shardManager, auth);
+BotBlockRequests.postGuilds(shardManager, auth);
 ```
 
 #### Sending without an instance
