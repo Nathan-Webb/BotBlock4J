@@ -18,8 +18,6 @@
  */
 package com.nathanwebb.botblock4j;
 
-import com.nathanwebb.botblock4j.sites.Site;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,21 +59,10 @@ public class BlockAuth {
     }
 
     /**
-     * Sets the authorization token for the given site. You may receive a API-token from the botlist-site.
-     * <br><b>If the value has already been set in the preceding code, the value will be overwritten.</b>
+     * Gives the HashMap containing the sites and their corresponding token.
      *
-     * @param site
-     *        The {@link com.nathanwebb.botblock4j.sites.Site Site} to get the link from.
-     * @param authToken
-     *        The token that you would normally put in your {@code Authorization} header if you were doing this manually.
+     * @return The HashMap with the sites and their tokens.
      */
-    public void setListAuthToken(Site site, String authToken){
-        isNotNull(site, "site");
-        isNotNull(authToken, "authToken");
-
-        authHashMap.put(site.getLink(), authToken);
-    }
-
     public Map<String, String> getAuthHashMap() {
         return authHashMap;
     }
@@ -105,26 +92,6 @@ public class BlockAuth {
             isNotNull(authToken, "authToken");
 
             authTokens.put(url.replaceAll("^https?://", ""), authToken);
-
-            return this;
-        }
-
-        /**
-         * Adds the provided {@link com.nathanwebb.botblock4j.sites.Site Site} and auth-token to the list.
-         * <br><b>If the value has already been set in the preceding code, the value will be overwritten.</b>
-         *
-         * @param  site
-         *         The {@link com.nathanwebb.botblock4j.sites.Site Site} to get the link from.
-         * @param  authToken
-         *         The token that you would normally put in your {@code Authorization} header if you were doing this manually.
-         *
-         * @return The Builder after the url and token have been added.
-         */
-        public Builder addListAuthToken(Site site, String authToken){
-            isNotNull(site, "site");
-            isNotNull(authToken, "authToken");
-
-            authTokens.put(site.getLink(), authToken);
 
             return this;
         }
