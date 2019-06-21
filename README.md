@@ -1,140 +1,181 @@
-[badge]: https://api.bintray.com/packages/nathan-webb/maven/BotBlock4J/images/download.svg
-[download]: https://bintray.com/nathan-webb/maven/BotBlock4J/_latestVersion
-
 [BotBlock]: https://botblock.org
-[api]: https://botblock.org/api/docs#count
+[api]: https://botblock.org/api/docs
 
-[BlockAuth]: https://github.com/Nathan-Webb/BotBlock4J/blob/master/src/main/java/com/nathanwebb/BotBlock4J/BlockAuth.java
+[BotBlockAPI]: https://github.com/Andre601/BotBlock4J/blob/master/src/main/java/com/nathanwebb/BotBlock4J/BotBlockAPI.java
 
 # BotBlock4J
-[![badge]][download]
 
 API wrapper for [BotBlock], a site that removes the hassle from managing multiple Discord bot list APIs.  
 You can view the full list of Discord bot list APIs that BotBlock, and by extension this wrapper, supports on the [BotBlock API docs][api].
 
-## Download
-You have three options for implementing the API.
+This Wrapper is now continued and updated by Andre601 after it was created and maintained by Nathan-Webb
+
+## Install
+You have two options for implementing the API.
 
 ### Gradle
 ```gradle
 repositories {
-    jcenter()
+    maven { url = "https://jitpack.io" }
 }
 
 dependencies {
- compile group: 'com.nathanwebb', name: 'BotBlock4J', version: 'LATEST-VERSION-HERE'
+ compile group: 'com.github.andre601', name: 'BotBlock4J', version: '2.0.0'
 }
 ```
 
 ### Maven
 ```xml
+<repositories>
+  <repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+  </repository>
+</repositories>
+
 <dependency>
-  <groupId>com.nathanwebb</groupId>
+  <groupId>com.github.andre601</groupId>
   <artifactId>BotBlock4J</artifactId>
-  <version>LATEST-VERSION-HERE</version>
-  <type>pom</type>
+  <version>2.0.0</version>
 </dependency>
 ```
-
-### Ivy
-
-```ivy
-<dependency org='com.nathanwebb' name='BotBlock4J' rev='LATEST-VERSION-HERE'>
-  <artifact name='BotBlock4J' ext='pom' ></artifact>
-</dependency>
-```
-
-##### Other:
-
-Alternatively, you could just head over to the [Bintray Site][download] and download the jar file yourself.
 
 ## Usage
-**Note**: You can also provide an instance of `ShardManager` instead of `JDA`
+Here are some examples of the Wrapper in action.
+Note that I use an instance of JDA (`jda`) as an example here, but you could also use an instance of `ShardManager`.
 
-### Creating a BlockAuth instance
-We have to create a [BlockAuth] instance to provide it later for the post requests.
+### Creating an instance of BotBlockAPI
+You first have to create a new Instance of the class [`BotBlockAPI`][BotBlockAPI].
+This will be used later.
 
-#### Using the Builder (Recommended)
-You can use the BlockAuth.Builder() to create an instance easy.  
+You can create an instance by using `BotBlockAPI.Builder()` like this:
 ```java
 /*
- * We can use BlockAuth.Builder() to add sites to the HashMap of lists
+ * We create a new instance of BotBlockAPI by using BotBlockAPI.Builder here.
  *
- * You can use addListAuthToken(String, String) and add as many as you like.
- *
- * Don't forget to call .build(); at the end to build the BlockAuth instance
+ * Note that you need to use BotBlockAPI.Builder()#disableJDARequirement() when not providing a JDA instance.
  */
-BlockAuth auth = new BlockAuth.Builder()
-    .addListAuthToken("botsfordiscord.com", "MyS3cr3tT0k3n")
-    .addListAuthToken("lbots.org", "My0th3rS3cr3tT0k3n")
+BotBlockAPI api = new BotBlockAPI.Builder()
+    .addAuthToken("lbots.org", "MyS3cretT0k3n")
+    .setJDA(jda)
     .build();
 ```
 
-#### Set manually
-If you want to set it manually you can just use `setListAuthToken(String, String)` directly.  
-```java
-BlockAuth auth = new BlockAuth();
+#### BotBlockAPI.Builder methods
+The Builder comes with a lot of different methods that you can use.
 
-// We have to call this method for each list.
-auth.setListAuthToken("botsfordiscord.com", "MyS3cr3tT0k3n");
-auth.setListAuthToken("lbots.org", "My0th3rS3cr3tT0k3n")
-```
+##### addAuthToken
+> **Requires**: `String, String`
 
-### Posting stats
-There are three different types of methods you can use, depending on your preferences.  
-All methods require you to have the [BlockAuth instance](#creating-a-blockauth-instance) set up.
+This method is required!
+Through this method can you set a Site (First String) and the corresponding token (Second String) for posting the Guilds.
 
-All shown examples use an BlockAuth called `auth` and a JDA instance called `jda` or ShardManager called `shardManager`.
+##### setAuthTokens
+> **Requires**: `Map<String, String>`
 
-#### Post every X minutes
-You can let BotBlock4J post stats automatically every X minutes.  
+This method directly sets the Map with the informations.
+It will override any entry that was made with [`addAuthToken(String, String)`](#addAuthToken)
+
+##### setAutoPost
+> **Requires**: `Boolean`
+
+Set if the Wrapper should start a Executor for auto-posting stats every x minutes. Default is `false`.
+You need to call `RequestHandler#startAutoPost(BotBlockAPI)` after that to start auto-posting.
+
+##### setUpdateInterval
+> **Requires**: `Integer`
+
+Set the delay in minutes in which the guilds should be posted. Default is `30`.
+The method throws an `IllegalArgumentException` when the provided Integer is less than 1.
+This is only needed when you want to auto-post the Guilds.
+
+##### disableJDARequirement
+> **Requires**: `Boolean`
+
+Set if an instance of JDA or ShardManager are required. True means it's *NOT* required. Default is `false`.
+
+##### setJDA
+> **Requires**: `JDA instance`
+
+Sets the JDA instance that should be used.
+This will set [`disableJDARequirement(Boolean)`](#disableJDARequirement) to false.
+The JDA instance will be ignored on auto-posting when [`setShardManager(ShardManager)`](#setShardManager) is used.
+
+##### setShardManager
+> **Requires**: `ShardManager instance`
+
+Sets the ShardManager that should be used.
+This will set [`disableJDARequirement(Boolean)`](#disableJDARequirement) to false.
+The ShardManager will be prioritized over JDA meaning that if you set both, the shardManager will be used on auto-post.
+
+##### build
+> **Requires**: `-`
+
+Builds the actual BotBlockAPI instance with the previously set values.
+
+This will throw an `IllegalStateException` when both JDA and ShardManager aren't set AND [`disableJDARequirement`](#disableJDARequirement) isn't used.
+
+### Post Guilds
+You have multiple ways available to post Guild counts.
+
+#### Auto-posting
+This lets you post the guilds each X minutes, without the need of setting up an own Scheduler.
+The delay will be defined through [`setUpdateInterval(Integer)`](#setUpdateInterval) and is by default 30 minutes.
+
+**Auto-Posting can only be done with an instance of JDA or ShardManager set!**
 ```java
 /*
- * Create an instance of BotBlockAPI.
- *
- * Default update interval is 30 minutes.
+ * Creating an instance of RequestHandler first.
  */
-BotBlockAPI api = new BotBlockAPI(jda, false, auth);
+RequestHandler handler = new RequestHandler();
 
-// Use this method to change the interval. This needs to be called before startSendingGuildCounts()
-api.setUpdateInterval(10);
+/*
+ * RequestHandler#startAutoPost requires an instance of BotBlockAPI which we made above
+ */
+handler.startAutoPost(api);
 
-// Call this to start posting of the guild count.
-api.startSendingGuildCounts();
-
-// Call this to stop sending of the guild count. You can use startSendingGuildCounts() to start it again.
-api.stopSendingGuildCounts();
+/*
+ * To stop the autoposting do we call RequestHandler#stopAutoPost();
+ */
+handler.stopAutoPost();
 ```
 
-#### Manually
-If you want to send the guild count manually you can use one of those methods.  
+#### Manual posting
+You can also manually post Guilds if you want.
+There are four different methods of posting Guilds. 2 for posting with JDA or ShardManager and 2 for without them.
 ```java
-// Posts the guild count of the provided JDA instance
-BotBlockRequests.postGuilds(jda, auth);
+/*
+ * Creating an instance of RequestHandler first.
+ */
+RequestHandler handler = new RequestHandler();
 
-// Posts the guild count of the provided ShardManager.
-BotBlockRequests.postGuilds(shardManager, auth);
+/*
+ * Using JDA.
+ */
+handler.postGuilds(jda, api);
+
+/*
+ * Using ShardManager.
+ */
+handler.postGuilds(shardManager, api);
+
+/*
+ * Providing bot id (String) and guilds (Integer) separate.
+ */
+handler.postGuilds("1234567890", 100, api);
+
+/*
+ * Providing bot id (Long) and guilds (Integer) separate.
+ */
+handler.postGuilds(1234567890L, 100, api);
 ```
 
-#### Sending without an instance
-If you don't want to provide a JDA or ShardManager instance you can use one of those methods here:  
-```java
-int guilds = 100;
+The methods above can throw the following Exceptions:
+- `IOException`
+When the connection was closed, cancelled or malformed in a way (e.g. receiving an empty ResponseBody)
+- `RatelimitedException`
+Thrown when the Bot (ID and/or IP) got ratelimited by BotBlock (Site returned code 429)
 
-// Posts the guild count with the provided Bot id as String.
-BotBlockRequests.postGuilds("yourBotId", guilds, auth);
-
-// Posts the guild count with the provided Bot id as Long.
-BotBlockRequests.postGuilds(1234567890L, guilds, auth);
-```
-
-### Errors
-The above methods can throw those Exceptions:
-- `FailedToSendException`  
-Thrown when one or more sites returned errors while posting. 
-- `EmptyResponseException`  
-When the BotBlockAPI returns an empty JSON body.
-- `RateLimitException`  
-When the Request was ratelimited.
-- `IOException`  
-When the connection drops/was cancelled.
+## Links
+- [BotBlock Website][BotBlock]
+- [API Docs][api]
