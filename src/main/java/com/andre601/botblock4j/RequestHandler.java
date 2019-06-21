@@ -37,7 +37,6 @@ public class RequestHandler {
     private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     private final OkHttpClient CLIENT = new OkHttpClient();
-    private final MediaType JSON = MediaType.get("application/json");
 
     public RequestHandler(){}
 
@@ -104,7 +103,7 @@ public class RequestHandler {
 
         botBlockAPI.getAuthTokens().forEach(json::put);
 
-        performRequest(json);
+        performRequest(json, jda.getSelfUser().getId());
     }
 
     /**
@@ -141,7 +140,7 @@ public class RequestHandler {
 
         botBlockAPI.getAuthTokens().forEach(json::put);
 
-        performRequest(json);
+        performRequest(json, shardManager.getShardById(0).getSelfUser().getId());
     }
 
     /**
@@ -191,7 +190,7 @@ public class RequestHandler {
 
         botBlockAPI.getAuthTokens().forEach(json::put);
 
-        performRequest(json);
+        performRequest(json, botId);
     }
 
     /**
@@ -245,12 +244,12 @@ public class RequestHandler {
         scheduler.shutdown();
     }
 
-    private void performRequest(JSONObject json) throws IOException, RatelimitedException{
-        RequestBody requestBody = RequestBody.create(JSON, json.toString());
+    private void performRequest(JSONObject json, String id) throws IOException, RatelimitedException{
+        RequestBody requestBody = RequestBody.create(null, json.toString());
 
         Request request = new Request.Builder()
                 .url("https://botblock.org/api/count")
-                .addHeader("User-Agent", json.getString("bot_id"))
+                .addHeader("User-Agent", id)
                 .addHeader("Content-Type", "application/json") // Some sites require this in the header.
                 .post(requestBody)
                 .build();
