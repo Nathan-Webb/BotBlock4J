@@ -115,7 +115,7 @@ The ShardManager will be prioritized over JDA meaning that if you set both, the 
 
 Builds the actual BotBlockAPI instance with the previously set values.
 
-This will throw an `IllegalStateException` when both JDA and ShardManager aren't set AND [`disableJDARequirement`](#disableJDARequirement) isn't used.
+This will throw an `IllegalStateException` when both JDA and ShardManager aren't set AND [`disableJDARequirement(Boolean)`](#disableJDARequirement) isn't used.
 
 ### Post Guilds
 You have multiple ways available to post Guild counts.
