@@ -97,17 +97,17 @@ Set if an instance of JDA or ShardManager are required. True means it's *NOT* re
 ##### setJDA
 > **Requires**: `JDA instance`
 
-This method is required when [`disableJDARequirement`](#disableJDARequirement) is false and [`setShardManager`](#setShardManager) isn't used.  
 Sets the JDA instance that should be used.  
-This will set [`disableJDARequirement(Boolean)`](#disableJDARequirement) to false.  
-The JDA instance will be ignored on auto-posting when [`setShardManager(ShardManager)`](#setShardManager) is used.
+This method is required when [`disableJDARequirement(Boolean)`](#disableJDARequirement) is false and [`setShardManager(ShardManager)`](#setShardManager) isn't used.  
+This will set `disableJDARequirement(Boolean)` to false when set.  
+The JDA instance will be ignored on auto-posting when `setShardManager(ShardManager)` is used.
 
 ##### setShardManager
 > **Requires**: `ShardManager instance`
 
-This method is required when [`disableJDARequirement`](#disableJDARequirement) is false and [`setJDA`](#setJDA) isn't used.  
 Sets the ShardManager that should be used.  
-This will set [`disableJDARequirement(Boolean)`](#disableJDARequirement) to false.  
+This method is required when [`disableJDARequirement(Boolean)`](#disableJDARequirement) is false and [`setJDA(JDA)`](#setJDA) isn't used.  
+This will set `disableJDARequirement(Boolean)` to false when set.  
 The ShardManager will be prioritized over JDA meaning that if you set both, the shardManager will be used on auto-post.
 
 ##### build
