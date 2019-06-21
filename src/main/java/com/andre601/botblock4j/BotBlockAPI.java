@@ -12,19 +12,24 @@ public class BotBlockAPI {
 
     private boolean autoPost;
     private int updateInterval;
+    private boolean requireJDA;
     private JDA jda;
     private ShardManager shardManager;
 
-    public BotBlockAPI(){}
-
-    public BotBlockAPI(Map<String, String> authTokens){
+    public BotBlockAPI(Map<String, String> authTokens, boolean autoPost, int updateInterval){
         this.authTokens = authTokens;
+        this.autoPost = autoPost;
+        this.updateInterval = updateInterval;
+        this.requireJDA = true;
+        this.jda = null;
+        this.shardManager = null;
     }
 
     public BotBlockAPI(Map<String, String> authTokens, boolean autoPost, int updateInterval, JDA jda){
         this.authTokens = authTokens;
         this.autoPost = autoPost;
         this.updateInterval = updateInterval;
+        this.requireJDA = false;
         this.jda = jda;
         this.shardManager = null;
     }
@@ -33,8 +38,17 @@ public class BotBlockAPI {
         this.authTokens = authTokens;
         this.autoPost = autoPost;
         this.updateInterval = updateInterval;
+        this.requireJDA = false;
         this.jda = null;
         this.shardManager = shardManager;
+    }
+
+    public Map<String, String> getAuthTokens(){
+        return authTokens;
+    }
+
+    public boolean requiresJDA(){
+        return requireJDA;
     }
 
     public static class Builder{
@@ -42,6 +56,7 @@ public class BotBlockAPI {
 
         private boolean autoPost = false;
         private int updateInterval = 30;
+        private boolean disabled = false;
         private JDA jda = null;
         private ShardManager shardManager = null;
 
@@ -131,6 +146,27 @@ public class BotBlockAPI {
         }
 
         /**
+         * Set if creating a {@link com.andre601.botblock4j.BotBlockAPI BotBlockAPI instance} requires either
+         * {@link net.dv8tion.jda.core.JDA JDA} or {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager} to
+         * be set.
+         * <br>You have to use this when using either
+         * {@link com.andre601.botblock4j.RequestHandler#postGuilds(Long, int, BotBlockAPI) postGuilds(Long, int, BotBlockAPI)} or
+         * {@link com.andre601.botblock4j.RequestHandler#postGuilds(String, int, BotBlockAPI) postGuilds(String, int, BotBlockAPI)}
+         *
+         * <p><b>This will be requireJDA when you set a JDA or ShardManager instance after it!</b>
+         *
+         * @param  disabled
+         *         The boolean to set if creating a BotBlockAPI instance requires JDA or ShardManager to be present.
+         *
+         * @return The Builder after the boolean was set.
+         */
+        public Builder disableJDARequirement(boolean disabled){
+            this.disabled = disabled;
+
+            return this;
+        }
+
+        /**
          * Sets the instance of {@link net.dv8tion.jda.core.JDA JDA} to use.
          * <br><b>This setting is ignored when a {@link #setShardManager(ShardManager) ShardManager} was set!</b>
          *
@@ -140,6 +176,9 @@ public class BotBlockAPI {
          * @return The Builder after JDA was set.
          */
         public Builder setJda(JDA jda){
+            if(disabled)
+                disabled = false;
+
             this.jda = jda;
 
             return this;
@@ -154,6 +193,9 @@ public class BotBlockAPI {
          * @return The Builder after the ShardManager was set.
          */
         public Builder setShardManager(ShardManager shardManager){
+            if(disabled)
+                disabled = false;
+
             this.shardManager = shardManager;
 
             return this;
@@ -174,7 +216,10 @@ public class BotBlockAPI {
             if(shardManager != null)
                 return new BotBlockAPI(authTokens, autoPost, updateInterval, shardManager);
             else
-                throw new IllegalStateException("Neither JDA nor ShardManager where set!");
+            if(disabled)
+                return new BotBlockAPI(authTokens, autoPost, updateInterval);
+            else
+                throw new IllegalStateException("Neither JDA nor ShardManager where set! Either set them or use disableJDARequirement");
         }
     }
 }
