@@ -263,8 +263,9 @@ public class RequestHandler {
                     throw new RatelimitedException(response.body().string());
 
                 throw new IOException(String.format(
-                        "Couldn't post Guilds to BotBlock-API! API responded with error code %d",
-                        response.code()
+                        "Couldn't post Guilds to BotBlock-API! API responded with error code %d (%s)",
+                        response.code(),
+                        response.message()
                 ));
             }
 
