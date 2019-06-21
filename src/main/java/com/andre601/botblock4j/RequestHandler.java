@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018 Nathan Webb (nathanwgithub@gmail.com), Andre601
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial
+ * portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+ * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
 package com.andre601.botblock4j;
 
 import com.andre601.botblock4j.exceptions.RatelimitedException;
@@ -11,12 +29,17 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class RequestHandler {
-    private final String POST_URL = "https://botblock.org/api/count";
+    private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     private final OkHttpClient CLIENT = new OkHttpClient();
     private final MediaType JSON = MediaType.get("application/json");
+
+    public RequestHandler(){}
 
     /**
      * Posts the Guilds from the provided {@link net.dv8tion.jda.core.JDA JDA instance} to the BotBlock-API.
@@ -114,11 +137,62 @@ public class RequestHandler {
         performRequest(json);
     }
 
+    /**
+     * Starts a Scheduler for posting the guilds each X minutes.
+     * <br>The delay can be set with {@link com.andre601.botblock4j.BotBlockAPI.Builder#setUpdateInterval(int) BotBlockAPI.Builder#setUpdateInterval(int)}.
+     *
+     * @param botBlockAPI
+     *        An instance of {@link com.andre601.botblock4j.BotBlockAPI BotBlockAPI}.
+     *        <br>{@link com.andre601.botblock4j.BotBlockAPI.Builder BotBlockAPI.Builder} can be used to create an instance.
+     *
+     * @throws IllegalStateException
+     *         This is thrown when one of the following things is the case:
+     *         <ul>
+     *             <li>{@link com.andre601.botblock4j.BotBlockAPI.Builder#disableJDARequirement(boolean) disableJDARequirement} was set to true.</li>
+     *             <li>Both {@link net.dv8tion.jda.core.JDA JDA} and {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager} are null.</li>
+     *             <li>When the Wrapper can't perfom the postRequest (Unknown Error)</li>
+     *         </ul>
+     */
+    public void startAutoPost(BotBlockAPI botBlockAPI) throws IllegalStateException{
+
+        if(botBlockAPI.isJdaDisabled())
+            throw new IllegalStateException("startAutoPost can't be called when disableJDARequirement is true!");
+
+        if(!ObjectUtils.anyNotNull(botBlockAPI.getJda(), botBlockAPI.getShardManager()))
+            throw new IllegalStateException("startAutoPost can't be called while JDA AND ShardManager are null!");
+
+        scheduler.scheduleAtFixedRate(() -> {
+            if(botBlockAPI.getShardManager() != null){
+                try{
+                    postGuilds(botBlockAPI.getShardManager(), botBlockAPI);
+                }catch(IllegalAccessException | IOException | RatelimitedException ex){
+                    ex.printStackTrace();
+                }
+            }else
+            if(botBlockAPI.getJda() != null){
+                try{
+                    postGuilds(botBlockAPI.getJda(), botBlockAPI);
+                }catch(IllegalAccessException | IOException | RatelimitedException ex){
+                    ex.printStackTrace();
+                }
+            }else{
+                throw new IllegalStateException("Unknown error while posting guilds.");
+            }
+        }, botBlockAPI.getUpdateInterval(), botBlockAPI.getUpdateInterval(), TimeUnit.MINUTES);
+    }
+
+    /**
+     * Shuts down the Scheduler.
+     */
+    public void stopAutoPost(){
+        scheduler.shutdown();
+    }
+
     private void performRequest(JSONObject json) throws IOException, RatelimitedException{
         RequestBody requestBody = RequestBody.create(JSON, json.toString());
 
         Request request = new Request.Builder()
-                .url(POST_URL)
+                .url("https://botblock.org/api/count")
                 .addHeader("User-Agent", json.getString("bot_id"))
                 .addHeader("Content-Type", "application/json") // Some sites require this in the header.
                 .post(requestBody)

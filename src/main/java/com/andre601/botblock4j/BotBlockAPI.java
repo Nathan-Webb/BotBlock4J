@@ -1,3 +1,21 @@
+/*
+ * Copyright 2018 Nathan Webb (nathanwgithub@gmail.com), Andre601
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial
+ * portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+ * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
 package com.andre601.botblock4j;
 
 import net.dv8tion.jda.bot.sharding.ShardManager;
@@ -8,53 +26,117 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BotBlockAPI {
-    private Map<String, String> authTokens = new HashMap<>();
+    private Map<String, String> authTokens;
 
-    private boolean autoPost;
     private int updateInterval;
-    private boolean requireJDA;
+    private boolean jdaDisabled;
     private JDA jda;
     private ShardManager shardManager;
 
-    public BotBlockAPI(Map<String, String> authTokens, boolean autoPost, int updateInterval){
+    /**
+     * Creates a BotBlockAPI instance without JDA or ShardManager set.
+     * <br>This whould be used when manually updating guilds.
+     *
+     * @param authTokens
+     *        Map containing all the sites and their respective api-token.
+     * @param updateInterval
+     *        The time to wait when auto-post the Guilds.
+     */
+    public BotBlockAPI(Map<String, String> authTokens, int updateInterval){
         this.authTokens = authTokens;
-        this.autoPost = autoPost;
         this.updateInterval = updateInterval;
-        this.requireJDA = true;
+        this.jdaDisabled = true;
         this.jda = null;
         this.shardManager = null;
     }
 
-    public BotBlockAPI(Map<String, String> authTokens, boolean autoPost, int updateInterval, JDA jda){
+    /**
+     * Creates a BotBlockAPI instance with a JDA instance set.
+     *
+     * @param authTokens
+     *        Map containing all the sites and their respective api-token.
+     * @param updateInterval
+     *        The time to wait when auto-post the Guilds.
+     * @param jda
+     *        The instance of {@link net.dv8tion.jda.core.JDA JDA}.
+     */
+    public BotBlockAPI(Map<String, String> authTokens, int updateInterval, JDA jda){
         this.authTokens = authTokens;
-        this.autoPost = autoPost;
         this.updateInterval = updateInterval;
-        this.requireJDA = false;
+        this.jdaDisabled = false;
         this.jda = jda;
         this.shardManager = null;
     }
 
-    public BotBlockAPI(Map<String, String> authTokens, boolean autoPost, int updateInterval, ShardManager shardManager){
+    /**
+     * Creates a BotBlockAPI instance with a ShardManager instance set.
+     *
+     * @param authTokens
+     *        Map containing all the sites and their respective api-token.
+     * @param updateInterval
+     *        The time to wait when auto-post the Guilds.
+     * @param shardManager
+     *        The instance of the {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager}.
+     */
+    public BotBlockAPI(Map<String, String> authTokens, int updateInterval, ShardManager shardManager){
         this.authTokens = authTokens;
-        this.autoPost = autoPost;
         this.updateInterval = updateInterval;
-        this.requireJDA = false;
+        this.jdaDisabled = false;
         this.jda = null;
         this.shardManager = shardManager;
     }
 
+    /**
+     * Gives the Map with the sites and their corresponding token.
+     *
+     * @return A Map containing the sites and their corresponding api-token.
+     */
     public Map<String, String> getAuthTokens(){
         return authTokens;
     }
 
-    public boolean requiresJDA(){
-        return requireJDA;
+    /**
+     * Returns if JDA (Either JDA or ShardManager) isn't required.
+     *
+     * @return True if JDA isn't required.
+     */
+    public boolean isJdaDisabled(){
+        return jdaDisabled;
     }
 
+    /**
+     * Returns the current instance of {@link net.dv8tion.jda.core.JDA JDA}.
+     *
+     * @return Possibly-null instance of {@link net.dv8tion.jda.core.JDA JDA}.
+     */
+    public JDA getJda(){
+        return jda;
+    }
+
+    /**
+     * Returns the current instance of the {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager}.
+     *
+     * @return Possibly-null instance of {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager}.
+     */
+    public ShardManager getShardManager(){
+        return shardManager;
+    }
+
+    /**
+     * Returns the update interval for {@link com.andre601.botblock4j.RequestHandler#startAutoPost(BotBlockAPI) RequestHandler#startAutoPost(BotBlockAPI)}.
+     *
+     * @return The update delay for the auto-posting.
+     */
+    public int getUpdateInterval(){
+        return updateInterval;
+    }
+
+    /**
+     * Builder class used to create an instance of {@link com.andre601.botblock4j.BotBlockAPI BotBlockAPI}.
+     */
     public static class Builder{
         private Map<String, String> authTokens = new HashMap<>();
 
-        private boolean autoPost = false;
         private int updateInterval = 30;
         private boolean disabled = false;
         private JDA jda = null;
@@ -109,23 +191,8 @@ public class BotBlockAPI {
         }
 
         /**
-         * Sets if the Wrapper should auto-post the guild count to the BotBlock-API.
-         * <br>Default is {@code false}.
-         *
-         * @param  autoPost
-         *         The boolean. True to post automatically, false to not.
-         *
-         * @return The Builder after the boolean was set.
-         */
-        public Builder setAutoPost(boolean autoPost){
-            this.autoPost = autoPost;
-
-            return this;
-        }
-
-        /**
          * Sets the delay (in minutes) that the wrapper waits before posting the guild count again.
-         * <br>This setting is ignored when {@link #setAutoPost(boolean)} is set to false.
+         * <br>This is used in {@link com.andre601.botblock4j.RequestHandler#startAutoPost(BotBlockAPI) RequestHandler#startAutoPost(BotBlockAPI)}
          *
          * @param  updateInterval
          *         The interval in minutes in which the Wrapper waits before posting again.
@@ -153,7 +220,7 @@ public class BotBlockAPI {
          * {@link com.andre601.botblock4j.RequestHandler#postGuilds(Long, int, BotBlockAPI) postGuilds(Long, int, BotBlockAPI)} or
          * {@link com.andre601.botblock4j.RequestHandler#postGuilds(String, int, BotBlockAPI) postGuilds(String, int, BotBlockAPI)}
          *
-         * <p><b>This will be requireJDA when you set a JDA or ShardManager instance after it!</b>
+         * <p><b>This will be isJdaDisabled when you set a JDA or ShardManager instance after it!</b>
          *
          * @param  disabled
          *         The boolean to set if creating a BotBlockAPI instance requires JDA or ShardManager to be present.
@@ -211,13 +278,13 @@ public class BotBlockAPI {
          */
         public BotBlockAPI build(){
             if(jda != null)
-                return new BotBlockAPI(authTokens, autoPost, updateInterval, jda);
+                return new BotBlockAPI(authTokens, updateInterval, jda);
             else
             if(shardManager != null)
-                return new BotBlockAPI(authTokens, autoPost, updateInterval, shardManager);
+                return new BotBlockAPI(authTokens, updateInterval, shardManager);
             else
             if(disabled)
-                return new BotBlockAPI(authTokens, autoPost, updateInterval);
+                return new BotBlockAPI(authTokens, updateInterval);
             else
                 throw new IllegalStateException("Neither JDA nor ShardManager where set! Either set them or use disableJDARequirement");
         }
