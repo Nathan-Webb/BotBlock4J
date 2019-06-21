@@ -1,11 +1,10 @@
-
 plugins {
     id "com.jfrog.bintray" version "1.8.4"
 }
 
 
-group 'com.nathanwebb'
-version '1.0.1'
+group = 'com.nathanwebb'
+version = '1.0.4'
 
 apply plugin: 'java'
 apply plugin: 'maven'
@@ -25,10 +24,10 @@ repositories {
 dependencies {
     compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.11.0'
     compile group: 'org.json', name: 'json', version: '20180813'
-    testCompile group: 'junit', name: 'junit', version: '4.12'
     compile ('net.dv8tion:JDA:3.6.0_368'){
         exclude module: 'opus-java'
     }
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
 
 }
 

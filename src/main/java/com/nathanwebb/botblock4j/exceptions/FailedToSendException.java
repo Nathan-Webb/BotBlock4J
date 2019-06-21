@@ -16,7 +16,7 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.nathanwebb.BotBlock4J.exceptions;
+package com.nathanwebb.botblock4j.exceptions;
 
 import java.util.List;
 

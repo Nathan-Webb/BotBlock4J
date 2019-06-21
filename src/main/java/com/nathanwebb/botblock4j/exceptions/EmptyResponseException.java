@@ -16,10 +16,19 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.nathanwebb.BotBlock4J.exceptions;
+package com.nathanwebb.botblock4j.exceptions;
 
 /**
- * Made to be extended by all other exceptions.
+ * Happens whenever the api doesn't return a JSON body.
  */
-class BotBlockException extends Throwable {
+public class EmptyResponseException extends BotBlockException {
+    private String message;
+
+    public EmptyResponseException(String message){
+        this.message = message;
+    }
+    @Override
+    public String getMessage() {
+        return this.message;
+    }
 }
