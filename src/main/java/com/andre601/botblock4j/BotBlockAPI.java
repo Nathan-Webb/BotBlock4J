@@ -21,6 +21,7 @@ package com.andre601.botblock4j;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import org.apache.commons.lang3.ObjectUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class BotBlockAPI {
      * @param updateInterval
      *        The time to wait when auto-post the Guilds.
      */
-    public BotBlockAPI(Map<String, String> authTokens, int updateInterval){
+    public BotBlockAPI(@NotNull Map<String, String> authTokens, int updateInterval){
         this.authTokens = authTokens;
         this.updateInterval = updateInterval;
         this.jdaDisabled = true;
@@ -60,7 +61,7 @@ public class BotBlockAPI {
      * @param jda
      *        The instance of {@link net.dv8tion.jda.core.JDA JDA}.
      */
-    public BotBlockAPI(Map<String, String> authTokens, int updateInterval, JDA jda){
+    public BotBlockAPI(@NotNull Map<String, String> authTokens, int updateInterval, @NotNull JDA jda){
         this.authTokens = authTokens;
         this.updateInterval = updateInterval;
         this.jdaDisabled = false;
@@ -78,7 +79,7 @@ public class BotBlockAPI {
      * @param shardManager
      *        The instance of the {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager}.
      */
-    public BotBlockAPI(Map<String, String> authTokens, int updateInterval, ShardManager shardManager){
+    public BotBlockAPI(@NotNull Map<String, String> authTokens, int updateInterval, @NotNull ShardManager shardManager){
         this.authTokens = authTokens;
         this.updateInterval = updateInterval;
         this.jdaDisabled = false;
@@ -158,7 +159,7 @@ public class BotBlockAPI {
          *
          * @return The Builder after the token was added.
          */
-        public Builder addAuthToken(String site, String token){
+        public Builder addAuthToken(@NotNull String site, @NotNull String token){
             if(ObjectUtils.isEmpty(site) || ObjectUtils.isEmpty(token))
                 throw new IllegalStateException("site and/or token may not be null!");
 
@@ -181,7 +182,7 @@ public class BotBlockAPI {
          *
          * @see #addAuthToken(String, String) for adding a single entry to the list.
          */
-        public Builder setAuthTokens(Map<String, String> authTokens){
+        public Builder setAuthTokens(@NotNull Map<String, String> authTokens){
             if(authTokens.isEmpty())
                 throw new IllegalStateException("the HashMap may not be empty!");
 
@@ -243,7 +244,7 @@ public class BotBlockAPI {
          *
          * @return The Builder after JDA was set.
          */
-        public Builder setJDA(JDA jda){
+        public Builder setJDA(@NotNull JDA jda){
             if(disabled)
                 disabled = false;
 
@@ -260,7 +261,7 @@ public class BotBlockAPI {
          *
          * @return The Builder after the ShardManager was set.
          */
-        public Builder setShardManager(ShardManager shardManager){
+        public Builder setShardManager(@NotNull ShardManager shardManager){
             if(disabled)
                 disabled = false;
 

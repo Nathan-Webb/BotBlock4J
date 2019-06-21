@@ -23,6 +23,7 @@ import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import okhttp3.*;
 import org.apache.commons.lang3.ObjectUtils;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,17 +51,13 @@ public class RequestHandler {
      *
      * @throws IllegalStateException
      *         When the post Request can't be performed (unknown error).
-     * @throws IllegalAccessException
-     *         When trying to use this method while both {@link net.dv8tion.jda.core.JDA JDA} and
-     *         {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager} are null.
      * @throws IOException
      *         When the post Request couldn't be performed.
      * @throws RatelimitedException
      *         When the Bot (ID and/or IP) got ratelimited by the BotBlock-API.
      */
-    public void postGuilds(BotBlockAPI botBlockAPI) throws IllegalStateException, IllegalAccessException, IOException, RatelimitedException{
-        if(!ObjectUtils.anyNotNull(botBlockAPI.getJDA(), botBlockAPI.getShardManager()))
-            throw new IllegalAccessException("JDA or ShardManager may not be null!");
+    public void postGuilds(@NotNull BotBlockAPI botBlockAPI) throws IOException, RatelimitedException{
+        Objects.requireNonNull(botBlockAPI, "BotBlockAPI may not be null.");
 
         if(botBlockAPI.getShardManager() != null)
             postGuilds(botBlockAPI.getShardManager(), botBlockAPI);
@@ -81,17 +78,14 @@ public class RequestHandler {
      *        An instance of {@link com.andre601.botblock4j.BotBlockAPI BotBlockAPI}.
      *        <br>{@link com.andre601.botblock4j.BotBlockAPI.Builder BotBlockAPI.Builder} can be used to create an instance.
      *
-     * @throws IllegalAccessException
-     *         When trying to use this method while both {@link net.dv8tion.jda.core.JDA JDA} and
-     *         {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager} are null.
      * @throws IOException
      *         When the post Request couldn't be performed.
      * @throws RatelimitedException
      *         When the Bot (ID and/or IP) got ratelimited by the BotBlock-API.
      */
-    public void postGuilds(JDA jda, BotBlockAPI botBlockAPI) throws IllegalAccessException, IOException, RatelimitedException{
-        if(!ObjectUtils.allNotNull(jda, botBlockAPI))
-            throw new IllegalAccessException("JDA and/or BotBlockAPI may not be null!");
+    public void postGuilds(@NotNull JDA jda, @NotNull BotBlockAPI botBlockAPI) throws IOException, RatelimitedException{
+        Objects.requireNonNull(jda, "JDA may not be null.");
+        Objects.requireNonNull(botBlockAPI, "BotBlockAPI may not be null.");
 
         JSONObject json = new JSONObject()
                 .put("server_count", jda.getGuildCache().size())
@@ -115,17 +109,14 @@ public class RequestHandler {
      *        An instance of {@link com.andre601.botblock4j.BotBlockAPI BotBlockAPI}.
      *        <br>{@link com.andre601.botblock4j.BotBlockAPI.Builder BotBlockAPI.Builder} can be used to create an instance.
      *
-     * @throws IllegalAccessException
-     *         When trying to use this method while both {@link net.dv8tion.jda.core.JDA JDA} and
-     *         {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager} are null.
      * @throws IOException
      *         When the post Request couldn't be performed.
      * @throws RatelimitedException
      *         When the Bot (ID and/or IP) got ratelimited by the BotBlock-API.
      */
-    public void postGuilds(ShardManager shardManager, BotBlockAPI botBlockAPI) throws IllegalAccessException, IOException, RatelimitedException{
-        if(!ObjectUtils.allNotNull(shardManager, botBlockAPI))
-            throw new IllegalAccessException("ShardManager and/or BotBlockAPI may not be null!");
+    public void postGuilds(@NotNull ShardManager shardManager, @NotNull BotBlockAPI botBlockAPI) throws IOException, RatelimitedException{
+        Objects.requireNonNull(shardManager, "ShardManager may not be null.");
+        Objects.requireNonNull(botBlockAPI, "BotBlockAPI may not be null.");
 
         JSONObject json = new JSONObject()
                 .put("server_count", shardManager.getGuildCache().size())
@@ -162,7 +153,7 @@ public class RequestHandler {
      *
      * @see #postGuilds(String, int, BotBlockAPI) for the full method.
      */
-    public void postGuilds(Long botId, int guilds, BotBlockAPI botBlockAPI) throws IOException, RatelimitedException{
+    public void postGuilds(Long botId, int guilds, @NotNull BotBlockAPI botBlockAPI) throws IOException, RatelimitedException{
         postGuilds(Long.toString(botId), guilds, botBlockAPI);
     }
 
@@ -183,7 +174,10 @@ public class RequestHandler {
      * @throws RatelimitedException
      *         When the Bot (ID and/or IP) got ratelimited by the BotBlock-API.
      */
-    public void postGuilds(String botId, int guilds, BotBlockAPI botBlockAPI) throws IOException, RatelimitedException{
+    public void postGuilds(@NotNull String botId, int guilds, @NotNull BotBlockAPI botBlockAPI) throws IOException, RatelimitedException{
+        Objects.requireNonNull(botId, "String botId may not be null.");
+        Objects.requireNonNull(botBlockAPI, "BotBlockAPI may not be null.");
+
         JSONObject json = new JSONObject()
                 .put("server_count", guilds)
                 .put("bot_id", botId);
@@ -208,27 +202,31 @@ public class RequestHandler {
      *             <li>Both {@link net.dv8tion.jda.core.JDA JDA} and {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager} are null.</li>
      *             <li>When the Wrapper can't perfom the postRequest (Unknown Error)</li>
      *         </ul>
+     * @throws NullPointerException
+     *         When both {@link net.dv8tion.jda.core.JDA JDA} and {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager}
+     *         are null.
      */
-    public void startAutoPost(BotBlockAPI botBlockAPI) throws IllegalStateException{
-
+    public void startAutoPost(@NotNull BotBlockAPI botBlockAPI) throws IllegalStateException, NullPointerException{
         if(botBlockAPI.isJdaDisabled())
             throw new IllegalStateException("startAutoPost can't be called when disableJDARequirement is true!");
 
+        Objects.requireNonNull(botBlockAPI, "BotBlockAPI may not be null.");
+
         if(!ObjectUtils.anyNotNull(botBlockAPI.getJDA(), botBlockAPI.getShardManager()))
-            throw new IllegalStateException("startAutoPost can't be called while JDA AND ShardManager are null!");
+            throw new NullPointerException("startAutoPost can't be called while JDA AND ShardManager are null!");
 
         scheduler.scheduleAtFixedRate(() -> {
             if(botBlockAPI.getShardManager() != null){
                 try{
                     postGuilds(botBlockAPI.getShardManager(), botBlockAPI);
-                }catch(IllegalAccessException | IOException | RatelimitedException ex){
+                }catch(IOException | RatelimitedException ex){
                     ex.printStackTrace();
                 }
             }else
             if(botBlockAPI.getJDA() != null){
                 try{
                     postGuilds(botBlockAPI.getJDA(), botBlockAPI);
-                }catch(IllegalAccessException | IOException | RatelimitedException ex){
+                }catch(IOException | RatelimitedException ex){
                     ex.printStackTrace();
                 }
             }else{
@@ -244,7 +242,7 @@ public class RequestHandler {
         scheduler.shutdown();
     }
 
-    private void performRequest(JSONObject json, String id) throws IOException, RatelimitedException{
+    private void performRequest(@NotNull JSONObject json, @NotNull String id) throws IOException, RatelimitedException{
         RequestBody requestBody = RequestBody.create(null, json.toString());
 
         Request request = new Request.Builder()
@@ -256,8 +254,7 @@ public class RequestHandler {
 
         try(Response response = CLIENT.newCall(request).execute()){
             if(!response.isSuccessful()){
-                if(response.body() == null)
-                    throw new IOException("Received empty response-body from BotBlock.");
+                Objects.requireNonNull(response.body(), "Received empty body from BotBlock API.");
 
                 if(response.code() == 429)
                     throw new RatelimitedException(response.body().string());
@@ -269,8 +266,7 @@ public class RequestHandler {
                 ));
             }
 
-            if(response.body() == null)
-                throw new IOException("Received empty response-body from BotBlock.");
+            Objects.requireNonNull(response.body(), "Received empty body from BotBlock API.");
 
             JSONObject responseJson = new JSONObject(response.body());
             if(!responseJson.get("failure").toString().equals("[]")){
