@@ -159,8 +159,8 @@ public class BotBlockAPI {
          * @return The Builder after the token was added.
          */
         public Builder addAuthToken(String site, String token){
-            if(!ObjectUtils.allNotNull(site, token))
-                throw new IllegalStateException("site and token may not be null!");
+            if(ObjectUtils.isEmpty(site) || ObjectUtils.isEmpty(token))
+                throw new IllegalStateException("site and/or token may not be null!");
 
             authTokens.put(site, token);
 
@@ -203,9 +203,9 @@ public class BotBlockAPI {
          * @return The Builder after the interval was set.
          */
         public Builder setUpdateInterval(int updateInterval){
-            if(updateInterval < 1){
+            if(updateInterval < 1)
                 throw new IllegalArgumentException("updateInterval can't be lower than 1!");
-            }
+
 
             this.updateInterval = updateInterval;
 
@@ -220,10 +220,11 @@ public class BotBlockAPI {
          * {@link com.andre601.botblock4j.RequestHandler#postGuilds(Long, int, BotBlockAPI) postGuilds(Long, int, BotBlockAPI)} or
          * {@link com.andre601.botblock4j.RequestHandler#postGuilds(String, int, BotBlockAPI) postGuilds(String, int, BotBlockAPI)}
          *
-         * <p><b>This will be isJdaDisabled when you set a JDA or ShardManager instance after it!</b>
+         * <p><b>This will be set to false when you set a JDA or ShardManager instance after it!</b>
          *
          * @param  disabled
          *         The boolean to set if creating a BotBlockAPI instance requires JDA or ShardManager to be present.
+         *         <br>True means that it does *NOT* require JDA or ShardManager.
          *
          * @return The Builder after the boolean was set.
          */

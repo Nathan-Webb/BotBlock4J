@@ -91,8 +91,8 @@ public class RequestHandler {
      *         When the Bot (ID and/or IP) got ratelimited by the BotBlock-API.
      */
     public void postGuilds(JDA jda, BotBlockAPI botBlockAPI) throws IllegalAccessException, IOException, RatelimitedException{
-        if(!ObjectUtils.allNotNull(jda))
-            throw new IllegalAccessException("JDA may not be null!");
+        if(!ObjectUtils.allNotNull(jda, botBlockAPI))
+            throw new IllegalAccessException("JDA and/or BotBlockAPI may not be null!");
 
         JSONObject json = new JSONObject()
                 .put("server_count", jda.getGuildCache().size())
@@ -125,8 +125,8 @@ public class RequestHandler {
      *         When the Bot (ID and/or IP) got ratelimited by the BotBlock-API.
      */
     public void postGuilds(ShardManager shardManager, BotBlockAPI botBlockAPI) throws IllegalAccessException, IOException, RatelimitedException{
-        if(!ObjectUtils.allNotNull(shardManager))
-            throw new IllegalAccessException("ShardManager may not be null!");
+        if(!ObjectUtils.allNotNull(shardManager, botBlockAPI))
+            throw new IllegalAccessException("ShardManager and/or BotBlockAPI may not be null!");
 
         JSONObject json = new JSONObject()
                 .put("server_count", shardManager.getGuildCache().size())
