@@ -1,7 +1,7 @@
 [BotBlock]: https://botblock.org
 [api]: https://botblock.org/api/docs
 
-[BotBlockAPI]: https://github.com/Andre601/BotBlock4J/blob/master/src/main/java/com/nathanwebb/BotBlock4J/BotBlockAPI.java
+[BotBlockAPI]: https://github.com/Nathan-Webb/BotBlock4J/blob/master/src/main/java/com/andre601/botblock4j/BotBlockAPI.java
 
 # BotBlock4J
 
@@ -41,14 +41,14 @@ dependencies {
 ```
 
 ## Usage
-Here are some examples of the Wrapper in action.
+Here are some examples of the Wrapper in action.  
 Note that I use an instance of JDA (`jda`) as an example here, but you could also use an instance of `ShardManager`.
 
 ### Creating an instance of BotBlockAPI
-You first have to create a new Instance of the class [`BotBlockAPI`][BotBlockAPI].
+You first have to create a new Instance of the class [`BotBlockAPI`][BotBlockAPI].  
 This will be used later.
 
-You can create an instance by using `BotBlockAPI.Builder()` like this:
+You can create an instance by using `BotBlockAPI.Builder()` like this:  
 ```java
 /*
  * We create a new instance of BotBlockAPI by using BotBlockAPI.Builder here.
@@ -67,26 +67,26 @@ The Builder comes with a lot of different methods that you can use.
 ##### addAuthToken
 > **Requires**: `String, String`
 
-This method is required!
+This method is required!  
 Through this method can you set a Site (First String) and the corresponding token (Second String) for posting the Guilds.
 
 ##### setAuthTokens
 > **Requires**: `Map<String, String>`
 
-This method directly sets the Map with the informations.
+This method directly sets the Map with the informations.  
 It will override any entry that was made with [`addAuthToken(String, String)`](#addAuthToken)
 
 ##### setAutoPost
 > **Requires**: `Boolean`
 
-Set if the Wrapper should start a Executor for auto-posting stats every x minutes. Default is `false`.
+Set if the Wrapper should start a Executor for auto-posting stats every x minutes. Default is `false`.  
 You need to call `RequestHandler#startAutoPost(BotBlockAPI)` after that to start auto-posting.
 
 ##### setUpdateInterval
 > **Requires**: `Integer`
 
-Set the delay in minutes in which the guilds should be posted. Default is `30`.
-The method throws an `IllegalArgumentException` when the provided Integer is less than 1.
+Set the delay in minutes in which the guilds should be posted. Default is `30`.  
+The method throws an `IllegalArgumentException` when the provided Integer is less than 1.  
 This is only needed when you want to auto-post the Guilds.
 
 ##### disableJDARequirement
@@ -97,15 +97,15 @@ Set if an instance of JDA or ShardManager are required. True means it's *NOT* re
 ##### setJDA
 > **Requires**: `JDA instance`
 
-Sets the JDA instance that should be used.
-This will set [`disableJDARequirement(Boolean)`](#disableJDARequirement) to false.
+Sets the JDA instance that should be used.  
+This will set [`disableJDARequirement(Boolean)`](#disableJDARequirement) to false.  
 The JDA instance will be ignored on auto-posting when [`setShardManager(ShardManager)`](#setShardManager) is used.
 
 ##### setShardManager
 > **Requires**: `ShardManager instance`
 
-Sets the ShardManager that should be used.
-This will set [`disableJDARequirement(Boolean)`](#disableJDARequirement) to false.
+Sets the ShardManager that should be used.  
+This will set [`disableJDARequirement(Boolean)`](#disableJDARequirement) to false.  
 The ShardManager will be prioritized over JDA meaning that if you set both, the shardManager will be used on auto-post.
 
 ##### build
@@ -119,10 +119,10 @@ This will throw an `IllegalStateException` when both JDA and ShardManager aren't
 You have multiple ways available to post Guild counts.
 
 #### Auto-posting
-This lets you post the guilds each X minutes, without the need of setting up an own Scheduler.
+This lets you post the guilds each X minutes, without the need of setting up an own Scheduler.  
 The delay will be defined through [`setUpdateInterval(Integer)`](#setUpdateInterval) and is by default 30 minutes.
 
-**Auto-Posting can only be done with an instance of JDA or ShardManager set!**
+**Auto-Posting can only be done with an instance of JDA or ShardManager set!**  
 ```java
 /*
  * Creating an instance of RequestHandler first.
@@ -141,8 +141,8 @@ handler.stopAutoPost();
 ```
 
 #### Manual posting
-You can also manually post Guilds if you want.
-There are four different methods of posting Guilds. 2 for posting with JDA or ShardManager and 2 for without them.
+You can also manually post Guilds if you want.  
+There are four different methods of posting Guilds. 2 for posting with JDA or ShardManager and 2 for without them.  
 ```java
 /*
  * Creating an instance of RequestHandler first.
@@ -171,9 +171,9 @@ handler.postGuilds(1234567890L, 100, api);
 ```
 
 The methods above can throw the following Exceptions:
-- `IOException`
+- `IOException`  
 When the connection was closed, cancelled or malformed in a way (e.g. receiving an empty ResponseBody)
-- `RatelimitedException`
+- `RatelimitedException`  
 Thrown when the Bot (ID and/or IP) got ratelimited by BotBlock (Site returned code 429)
 
 ## Links
