@@ -109,7 +109,7 @@ public class BotBlockAPI {
      *
      * @return Possibly-null instance of {@link net.dv8tion.jda.core.JDA JDA}.
      */
-    public JDA getJda(){
+    public JDA getJDA(){
         return jda;
     }
 
@@ -242,7 +242,7 @@ public class BotBlockAPI {
          *
          * @return The Builder after JDA was set.
          */
-        public Builder setJda(JDA jda){
+        public Builder setJDA(JDA jda){
             if(disabled)
                 disabled = false;
 

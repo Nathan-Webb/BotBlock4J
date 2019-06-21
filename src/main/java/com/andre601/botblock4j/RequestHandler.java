@@ -42,6 +42,37 @@ public class RequestHandler {
     public RequestHandler(){}
 
     /**
+     * Shortcut method to either use {@link #postGuilds(ShardManager, BotBlockAPI)} or {@link #postGuilds(JDA, BotBlockAPI)}.
+     * <br>ShardManager is prioritized over JDA.
+     *
+     * @param  botBlockAPI
+     *        An instance of {@link com.andre601.botblock4j.BotBlockAPI BotBlockAPI}.
+     *        <br>{@link com.andre601.botblock4j.BotBlockAPI.Builder BotBlockAPI.Builder} can be used to create an instance.
+     *
+     * @throws IllegalStateException
+     *         When the post Request can't be performed (unknown error).
+     * @throws IllegalAccessException
+     *         When trying to use this method while both {@link net.dv8tion.jda.core.JDA JDA} and
+     *         {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager} are null.
+     * @throws IOException
+     *         When the post Request couldn't be performed.
+     * @throws RatelimitedException
+     *         When the Bot (ID and/or IP) got ratelimited by the BotBlock-API.
+     */
+    public void postGuilds(BotBlockAPI botBlockAPI) throws IllegalStateException, IllegalAccessException, IOException, RatelimitedException{
+        if(!ObjectUtils.anyNotNull(botBlockAPI.getJDA(), botBlockAPI.getShardManager()))
+            throw new IllegalAccessException("JDA or ShardManager may not be null!");
+
+        if(botBlockAPI.getShardManager() != null)
+            postGuilds(botBlockAPI.getShardManager(), botBlockAPI);
+        else
+        if(botBlockAPI.getJDA() != null)
+            postGuilds(botBlockAPI.getJDA(), botBlockAPI);
+        else
+            throw new IllegalStateException("Unknown issue while using postGuilds(BotBlockAPI)");
+    }
+
+    /**
      * Posts the Guilds from the provided {@link net.dv8tion.jda.core.JDA JDA instance} to the BotBlock-API.
      * <br>If the provided JDA is sharded (Has ShardInfo) then the shards ID and the total shard count will be posted too.
      *
@@ -50,6 +81,14 @@ public class RequestHandler {
      * @param botBlockAPI
      *        An instance of {@link com.andre601.botblock4j.BotBlockAPI BotBlockAPI}.
      *        <br>{@link com.andre601.botblock4j.BotBlockAPI.Builder BotBlockAPI.Builder} can be used to create an instance.
+     *
+     * @throws IllegalAccessException
+     *         When trying to use this method while both {@link net.dv8tion.jda.core.JDA JDA} and
+     *         {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager} are null.
+     * @throws IOException
+     *         When the post Request couldn't be performed.
+     * @throws RatelimitedException
+     *         When the Bot (ID and/or IP) got ratelimited by the BotBlock-API.
      */
     public void postGuilds(JDA jda, BotBlockAPI botBlockAPI) throws IllegalAccessException, IOException, RatelimitedException{
         if(!ObjectUtils.allNotNull(jda))
@@ -76,6 +115,14 @@ public class RequestHandler {
      * @param botBlockAPI
      *        An instance of {@link com.andre601.botblock4j.BotBlockAPI BotBlockAPI}.
      *        <br>{@link com.andre601.botblock4j.BotBlockAPI.Builder BotBlockAPI.Builder} can be used to create an instance.
+     *
+     * @throws IllegalAccessException
+     *         When trying to use this method while both {@link net.dv8tion.jda.core.JDA JDA} and
+     *         {@link net.dv8tion.jda.bot.sharding.ShardManager ShardManager} are null.
+     * @throws IOException
+     *         When the post Request couldn't be performed.
+     * @throws RatelimitedException
+     *         When the Bot (ID and/or IP) got ratelimited by the BotBlock-API.
      */
     public void postGuilds(ShardManager shardManager, BotBlockAPI botBlockAPI) throws IllegalAccessException, IOException, RatelimitedException{
         if(!ObjectUtils.allNotNull(shardManager))
@@ -109,6 +156,11 @@ public class RequestHandler {
      *        An instance of {@link com.andre601.botblock4j.BotBlockAPI BotBlockAPI}.
      *        <br>{@link com.andre601.botblock4j.BotBlockAPI.Builder BotBlockAPI.Builder} can be used to create an instance.
      *
+     * @throws IOException
+     *         When the post Request couldn't be performed.
+     * @throws RatelimitedException
+     *         When the Bot (ID and/or IP) got ratelimited by the BotBlock-API.
+     *
      * @see #postGuilds(String, int, BotBlockAPI) for the full method.
      */
     public void postGuilds(Long botId, int guilds, BotBlockAPI botBlockAPI) throws IOException, RatelimitedException{
@@ -126,6 +178,11 @@ public class RequestHandler {
      * @param botBlockAPI
      *        An instance of {@link com.andre601.botblock4j.BotBlockAPI BotBlockAPI}.
      *        <br>{@link com.andre601.botblock4j.BotBlockAPI.Builder BotBlockAPI.Builder} can be used to create an instance.
+     *
+     * @throws IOException
+     *         When the post Request couldn't be performed.
+     * @throws RatelimitedException
+     *         When the Bot (ID and/or IP) got ratelimited by the BotBlock-API.
      */
     public void postGuilds(String botId, int guilds, BotBlockAPI botBlockAPI) throws IOException, RatelimitedException{
         JSONObject json = new JSONObject()
@@ -158,7 +215,7 @@ public class RequestHandler {
         if(botBlockAPI.isJdaDisabled())
             throw new IllegalStateException("startAutoPost can't be called when disableJDARequirement is true!");
 
-        if(!ObjectUtils.anyNotNull(botBlockAPI.getJda(), botBlockAPI.getShardManager()))
+        if(!ObjectUtils.anyNotNull(botBlockAPI.getJDA(), botBlockAPI.getShardManager()))
             throw new IllegalStateException("startAutoPost can't be called while JDA AND ShardManager are null!");
 
         scheduler.scheduleAtFixedRate(() -> {
@@ -169,9 +226,9 @@ public class RequestHandler {
                     ex.printStackTrace();
                 }
             }else
-            if(botBlockAPI.getJda() != null){
+            if(botBlockAPI.getJDA() != null){
                 try{
-                    postGuilds(botBlockAPI.getJda(), botBlockAPI);
+                    postGuilds(botBlockAPI.getJDA(), botBlockAPI);
                 }catch(IllegalAccessException | IOException | RatelimitedException ex){
                     ex.printStackTrace();
                 }
